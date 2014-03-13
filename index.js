@@ -1,47 +1,48 @@
 
-const BEYO_MODULE_PATTERN = /^beyo-(.+)$/;
-
 var fs = require('fs');
 var glob = require('co-glob');
 var koa = require('koa');
 var mount = require('koa-mount');
 
-var configLoader = require('./lib/config-loader');
-var loggerLoader = require('./lib/logger-loader');
-var moduleLoader = require('./lib/module-loader');
+var configLoader = require('./lib/loaders/config');
+var pluginsLoader = require('./lib/loaders/plugins');
+var loggerLoader = require('./lib/loaders/logger');
+var moduleLoader = require('./lib/loaders/module');
 
 var env = process.env.NODE_ENV || 'development';
 var beyo = module.exports;
 var appRoot = module.exports.appRoot = process.cwd();
 var appPackage = require(appRoot + '/package');
+var events = module.exports.events = new (require('events').EventEmitter);
 
 
-module.exports.init = function * init(module) {
-  var depKeys = Object.keys(appPackage.dependencies);
-  var initModule;
+module.exports.init = function * init() {
+  events.emit('beforeInitialize', beyo);
 
-  beyo.config = yield configLoader(appRoot + '/conf');
+  Object.defineProperty(module.exports, 'app', {
+    configurable: false,
+    enumerable: true,
+    writable: false,
+    value: _createApp()
+  });
+
+  beyo.config = yield configLoader(appRoot + '/conf', beyo);
   beyo.logger = yield loggerLoader(beyo);
+  beyo.plugins = yield pluginsLoader(beyo, beyo.config);
 
-  for (var i = 0, len = depKeys.length; i < len; i++) {
-    initModule = BEYO_MODULE_PATTERN.exec(depKeys[i]);
-
-    if (initModule) {
-      yield (require('./init/' + initModule[1]))(beyo, module.require('beyo-' + initModule[1]));
-    }
-  }
+  events.emit('afterInitialize', beyo);
 };
 
 module.exports.initApplication = function * initApplication() {
   var modules = module.exports.modules = {};
-  var modulePaths = module.exports.config.modulePaths;
+  var modulePaths = beyo.config.modulePaths;
   var moduleResult;
 
   for (var i = 0, iLen = modulePaths.length; i < iLen; i++) {
     var files = yield glob('*', { cwd: modulePaths[i], mark: true });
     for (var j = 0, jLen = files.length; j < jLen; j++) {
       if (files[j].substr(-1) === '/') {
-        moduleResult = yield moduleLoader(beyo, appRoot + '/' + modulePaths[i] + '/' + files[j]);
+        moduleResult = yield moduleLoader(appRoot + '/' + modulePaths[i] + '/' + files[j], beyo);
 
         if (moduleResult !== false) {
           modules[files[j].substr(0, files[j].length - 1)] = moduleResult;
@@ -55,18 +56,48 @@ module.exports.initApplication = function * initApplication() {
 /**
 Create a new koa instance, mount it at path and return it
 */
-module.exports.createSubApp = function createSubApp(path) {
-  var app = koa();
-
-  beyo.app.use(mount(path, app));
-
-  return app;
+module.exports.createSubApp = function createSubApp(path, baseApp) {
+  return _createApp(path, baseApp);
 };
 
 
-Object.defineProperty(module.exports, 'app', {
-  configurable: false,
-  enumerable: true,
-  writable: false,
-  value: koa()
-});
+function _createApp(mountPath, baseApp) {
+  var app = koa();
+  var isRoot = !mountPath;
+
+  if (isRoot) {
+    mountPath = undefined;
+  } else {
+    if (typeof mountPath !== 'string') {
+      throw new Error('Mount path must be a string : ' + String(mountPath));
+    }
+  }
+
+  events.emit('appCreated', {
+    app: app,
+    path: mountPath,
+    isRoot: isRoot
+  });
+
+  if (mountPath) {
+    baseApp = baseApp || beyo.app;
+
+    baseApp.use(mount(mountPath, app));
+  }
+
+  return app;
+}
+
+
+/**
+A default logger. May be overridden
+*/
+beyo.logger = {
+  log: function defaultLogger(level) {
+    var args = Array.prototype.slice.call(arguments, 1);
+
+    args[0] = level + ': ' + args[0];
+
+    console.log.apply(console, args);
+  }
+};

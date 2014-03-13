@@ -8,6 +8,7 @@ Beyo Application framework built on top of koa and other goodies.
 * Asynchronous API through generator functions [`co`](https://github.com/visionmedia/co) compatible.
 * Modular application design using a simple HMVC pattern
 * Unobstructive implementation, just the project structure guideline
+* Event driven
 
 
 ## Project structure
@@ -28,6 +29,7 @@ A Beyo application project have this structure.
   |  +- index.json
   +- layouts
   |  +- index.jade
+  +- plugins
   +- pub
      +- css
      +- js
@@ -96,17 +98,18 @@ Please refer to the [Plugins](#Plugins) section for more information.
 
 ## Plugins
 
-Plugins are node modules exposing a single `GeneratorFunction`, configured, and made
-available globally throughout the application via the `beyo` (globally) and
-`beyo.modules.*` (module-specific) objects.
+Plugins are node modules exposing a single `GeneratorFunction`. Once configured, and
+executed, the result of each plugin are made available globally throughout the
+application via the `beyo.plugins` object (using the application's configuration),
+or through each modules' `beyo.modules.<moduleName>.plugins` object.
 
-**TODO** : register plugins and have official Beyo plugins already registered.
-
-Each plugin module's function will receive two arguments : the `beyo` and `moduleData`
-objects, and should return their values. For example, the plugin `foo` might look like this :
+Each plugin module's function will receive two arguments : the `beyo` object, and
+the plugin's configuration `options`. Each plugin should return their values. For
+example, the plugin `foo` might look like this :
 
 ```javascript
-module.exports = function * foo(beyo, moduleData) {
+// file "plugins/foo.js"
+module.exports = function * fooPlugin(beyo, options) {
   // NOTE : if moduleData is undefined, the we are loading the plugin globally!
   var pluginValue = 'This is foo!';
 
@@ -115,13 +118,26 @@ module.exports = function * foo(beyo, moduleData) {
   return pluginValue;
 };
 ```
-Will result in `beyo.foo == 'This is foo!'`.
 
+If configured globally, this plugin will result in `beyo.plugins.foo == 'This is foo!'`.
 
-### Predefined Beyo Plugins
+### Plugin Configuration
 
-* **i18n** *(beyo-i18n)* : *TODO*
-* **model** *(beyo-moddel)* : *TODO*
+To configure a global plugin, declare it inside the application's configuration.
+To configure a module plugin, declare it inside the module's configuration. Regardless
+how they are loaded, plugins must be decalred inside a `"plugins"` configuration
+key. For example :
+
+```
+{
+  "plugins": {
+    foo: "Hello"
+  }
+}
+```
+
+The above config (i.e. `beyo.config.plugins.foo` or `beyo.modules.?.config.plugins.foo`)
+will invoke the `foo` plugin with it's `config == "Hello"`.
 
 
 ## Application Modules
@@ -147,6 +163,29 @@ Will result in `beyo.foo == 'This is foo!'`.
 ### Views
 
 *TODO*
+
+
+## Events
+
+Almost all aspect of the application can be monitored and managed through events.
+
+* **beforeInitialize** *(beyo)* : fired when calling `beyo.init()`
+* **afterInitialize** *(beyo)* : fired when calling `beyo.init()`
+* **appCreated** *(object)* : fired when a koa application is created. The event
+listeners receive the `app` instance, the mounted `path`, and if this `isRoot`
+application.
+* **configLoaded** *(object)* : fired when a configuration object has loaded. The
+event listeners receive the configuration `path`, the `files` found, and the
+`config` object constructed from the them.
+* **loggerLoaded** *(winston)* : fired when the logger has been loaded. The event
+listeners receive the [winston](https://github.com/flatiron/winston) instance.
+* **pluginLoaded** *(object)* : fired when a plugin is loaded. The event listeners
+receive the plugin's `path`, the actual `plugin` function and it's result (`pluginValue`).
+* **beforeModuleLoad** *(object)* : fired when a module is being loaded. The event
+listeners receive the module `path` and it's `data` object.
+* **afterModuleLoad** *(object)* : fired when a module is being loaded. The event
+listeners receive the module `path`, it's `data` object, and the module's
+`app` instance.
 
 
 ## Contribution
