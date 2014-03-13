@@ -36,7 +36,44 @@ A Beyo application project have this structure.
 
 ### Global Application Configuration
 
-*TODO*
+
+* **logger** : the logger configuration. This logger may be accessed via `beyo.logger` and is an instance of [Winston](https://github.com/flatiron/winston).
+
+  ```
+  {
+    "levels": {
+      "critical": 6,
+      "error": 5,
+      "warning": 4,
+      "alert": 3,
+      "notice": 2,
+      "info": 1,
+      "debug": 0
+    },
+    "colors": {
+      "critical": "red",
+      "error": "bold red",
+      "warning": "yellow",
+      "alert": "bold yellow",
+      "notice": "bold green",
+      "info": "green",
+      "debug": "blue"
+    },
+    "level": "debug",
+    "transports": {
+      "console": {
+        "colorize": true,
+        "handleExceptions": true,
+        "json": false,
+        "level": "debug",
+        "prettyPrint": true,
+        "timestamp": false
+      }
+    },
+    "exitOnError": false
+  }
+  ```
+
 
 ### Module Specific Configuration
 

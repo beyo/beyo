@@ -5,7 +5,9 @@ var fs = require('fs');
 var glob = require('co-glob');
 var koa = require('koa');
 var mount = require('koa-mount');
+
 var configLoader = require('./lib/config-loader');
+var loggerLoader = require('./lib/logger-loader');
 var moduleLoader = require('./lib/module-loader');
 
 var env = process.env.NODE_ENV || 'development';
@@ -19,6 +21,7 @@ module.exports.init = function * init(module) {
   var initModule;
 
   beyo.config = yield configLoader(appRoot + '/conf');
+  beyo.logger = yield loggerLoader(beyo);
 
   for (var i = 0, len = depKeys.length; i < len; i++) {
     initModule = BEYO_MODULE_PATTERN.exec(depKeys[i]);
