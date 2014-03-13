@@ -2,11 +2,13 @@
 
 Beyo Application framework built on top of koa and other goodies.
 
+
 ## Features
 
 * Asynchronous API through generator functions [`co`](https://github.com/visionmedia/co) compatible.
 * Modular application design using a simple HMVC pattern
 * Unobstructive implementation, just the project structure guideline
+
 
 ## Project structure
 
@@ -23,7 +25,7 @@ A Beyo application project have this structure.
   |  |  +- views
   |  +- index.js
   +- conf
-     +- index.json
+  |  +- index.json
   +- layouts
   |  +- index.jade
   +- pub
@@ -36,8 +38,9 @@ A Beyo application project have this structure.
 
 ### Global Application Configuration
 
-
-* **logger** : the logger configuration. This logger may be accessed via `beyo.logger` and is an instance of [Winston](https://github.com/flatiron/winston).
+* **logger** *(Object)* : the logger configuration. This logger may be accessed via
+`beyo.logger` and is an instance of [Winston](https://github.com/flatiron/winston). A
+typical config would be, for example :
 
   ```
   {
@@ -73,36 +76,84 @@ A Beyo application project have this structure.
     "exitOnError": false
   }
   ```
+  All options are treated as is, exception for `transports` and `exceptionHandlers`,
+  which are converted into `winston.transport.*` instances automatically, passing
+  their options directly to the tranport's constructor. *(Default: `{}`)*
+
+* **modulePaths** *(Array)* : This configuration is mandatory and contains a list of
+paths to load MVC modules. It may have an interest for multi-domain projects, where each
+domain would have their own `app/modules` structure. Each path are relative to the project's
+root directory. *(Mandatory, typically `['app/modules']`)*
+
+* **plugins** *{Object}* : Specify which plugins will be loaded and available globally.
+Please refer to the [Plugins](#Plugins) section for more information.
 
 
 ### Module Specific Configuration
 
 *TODO*
 
+
+## Plugins
+
+Plugins are node modules exposing a single `GeneratorFunction`, configured, and made
+available globally throughout the application via the `beyo` (globally) and
+`beyo.modules.*` (module-specific) objects.
+
+**TODO** : register plugins and have official Beyo plugins already registered.
+
+Each plugin module's function will receive two arguments : the `beyo` and `moduleData`
+objects, and should return their values. For example, the plugin `foo` might look like this :
+
+```javascript
+module.exports = function * foo(beyo, moduleData) {
+  // NOTE : if moduleData is undefined, the we are loading the plugin globally!
+  var pluginValue = 'This is foo!';
+
+  // init plugin stuff...
+
+  return pluginValue;
+};
+```
+Will result in `beyo.foo == 'This is foo!'`.
+
+
+### Predefined Beyo Plugins
+
+* **i18n** *(beyo-i18n)* : *TODO*
+* **model** *(beyo-moddel)* : *TODO*
+
+
 ## Application Modules
 
 *TODO*
+
 
 ### Controllers
 
 *TODO*
 
+
 ### Models
 
 *TODO*
+
 
 #### Mappers
 
 *TODO*
 
+
 ### Views
 
 *TODO*
+
 
 ## Contribution
 
 All contributions welcome! Every PR **must** be accompanied by their associated
 unit tests!
+
 
 ## License
 
