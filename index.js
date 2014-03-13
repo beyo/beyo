@@ -5,6 +5,7 @@ var fs = require('fs');
 var glob = require('co-glob');
 var koa = require('koa');
 var mount = require('koa-mount');
+var configLoader = require('./lib/config-loader');
 var moduleLoader = require('./lib/module-loader');
 
 var env = process.env.NODE_ENV || 'development';
@@ -13,26 +14,11 @@ var appRoot = module.exports.appRoot = process.cwd();
 var appPackage = require(appRoot + '/package');
 
 
-function * loadConfig(configPath) {
-  var config = module.exports.config = {};
-  (yield glob('**/*.{js,json}', { cwd: configPath })).reverse().forEach(function (file) {
-    var keyPath = file.split('/');
-    var confCtx = config;
-    var conf = require(configPath + '/' + file.replace(/\.js(on)?$/, ''));
-
-    for (var i = 0, len = keyPath.length - 1; i < len; i++) {
-      confCtx = confCtx[keyPath[i]] || (confCtx[keyPath[i]] = {});
-    }
-
-    Object.keys(conf).forEach(function (key) { confCtx[key] = conf[key]; });
-  });
-}
-
 module.exports.init = function * init(module) {
   var depKeys = Object.keys(appPackage.dependencies);
   var initModule;
 
-  yield loadConfig(appRoot + '/conf');
+  beyo.config = yield configLoader(appRoot + '/conf');
 
   for (var i = 0, len = depKeys.length; i < len; i++) {
     initModule = BEYO_MODULE_PATTERN.exec(depKeys[i]);

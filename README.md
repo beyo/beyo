@@ -16,10 +16,9 @@ A Beyo application project have this structure.
 - ./project-root
   +- app
   |  +- modules
+  |  |  +- conf
   |  |  +- controllers
   |  |  +- models
-  |  |  |  +- mappers
-  |  |  |  +-
   |  |  +- services
   |  |  +- views
   |  +- index.js
@@ -33,7 +32,13 @@ A Beyo application project have this structure.
      +- img
 ```
 
-## Application Configuration
+## Configurations
+
+### Global Application Configuration
+
+*TODO*
+
+### Module Specific Configuration
 
 *TODO*
 
