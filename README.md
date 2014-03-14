@@ -29,7 +29,6 @@ A Beyo application project have this structure.
   |  +- index.json
   +- layouts
   |  +- index.jade
-  +- plugins
   +- pub
      +- css
      +- js

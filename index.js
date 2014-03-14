@@ -6,8 +6,9 @@ var mount = require('koa-mount');
 
 var configLoader = require('./lib/loaders/config');
 var pluginsLoader = require('./lib/loaders/plugins');
+var middlewaresLoader = require('./lib/loaders/middlewares');
 var loggerLoader = require('./lib/loaders/logger');
-var moduleLoader = require('./lib/loaders/module');
+var modulesLoader = require('./lib/loaders/modules');
 
 var env = process.env.NODE_ENV || 'development';
 var beyo = module.exports;
@@ -16,7 +17,7 @@ var appPackage = require(appRoot + '/package');
 var events = module.exports.events = new (require('events').EventEmitter);
 
 
-module.exports.init = function * init() {
+module.exports.init = function * init(appRequire) {
   events.emit('beforeInitialize', beyo);
 
   Object.defineProperty(module.exports, 'app', {
@@ -26,6 +27,7 @@ module.exports.init = function * init() {
     value: _createApp()
   });
 
+  beyo.appRequire = appRequire;
   beyo.config = yield configLoader(appRoot + '/conf', beyo);
   beyo.logger = yield loggerLoader(beyo);
   beyo.plugins = yield pluginsLoader(beyo, beyo.config.plugins);
@@ -35,22 +37,7 @@ module.exports.init = function * init() {
 };
 
 module.exports.initApplication = function * initApplication() {
-  var modules = module.exports.modules = {};
-  var modulePaths = beyo.config.modulePaths;
-  var moduleResult;
-
-  for (var i = 0, iLen = modulePaths.length; i < iLen; i++) {
-    var files = yield glob('*', { cwd: modulePaths[i], mark: true });
-    for (var j = 0, jLen = files.length; j < jLen; j++) {
-      if (files[j].substr(-1) === '/') {
-        moduleResult = yield moduleLoader(appRoot + '/' + modulePaths[i] + '/' + files[j], beyo);
-
-        if (moduleResult !== false) {
-          modules[files[j].substr(0, files[j].length - 1)] = moduleResult;
-        }
-      }
-    }
-  }
+  beyo.modules = yield modulesLoader(beyo);
 };
 
 
