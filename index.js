@@ -28,7 +28,8 @@ module.exports.init = function * init() {
 
   beyo.config = yield configLoader(appRoot + '/conf', beyo);
   beyo.logger = yield loggerLoader(beyo);
-  beyo.plugins = yield pluginsLoader(beyo, beyo.config);
+  beyo.plugins = yield pluginsLoader(beyo, beyo.config.plugins);
+  beyo.middlewares = yield middlewaresLoader(beyo, beyo.config.middlewares);
 
   events.emit('afterInitialize', beyo);
 };

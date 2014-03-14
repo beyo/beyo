@@ -36,7 +36,6 @@
     "thunkify": "0.0.1",
     "co-glob": "0.0.1",
     "koa-mount": "~1.2.3",
-    "koa-views": "^1.2.0",
     "winston": "^0.7.2"
   },
   "devDependencies": {
