@@ -1,0 +1,10 @@
+/**
+Application launcher
+*/
+
+module.exports = function * appStart(beyo) {
+
+  yield beyo.init();
+  yield beyo.initApplication();
+
+};

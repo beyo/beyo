@@ -5,6 +5,7 @@
  */
 
 var program = require('commander');
+var commandPath = __dirname + '/commands/';
 var co = require('co');
 var beyo = require('..');
 
@@ -16,7 +17,17 @@ program
   //.option('-b, --backlog <size>', 'specify the backlog size [511]', '511')
   //.option('-r, --ratelimit <n>', 'ratelimit requests [2500]', '2500')
   //.option('-d, --ratelimit-duration <ms>', 'ratelimit duration [1h]', '1h')
-  .parse(process.argv);
+;
+
+require('fs').readdirSync(commandPath).sort(function (a, b) {
+  return a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase());
+}).forEach(function (file) {
+  if (/\.js$/.test(file)) {
+    require(commandPath + file)(program.command(file.replace(/\.js$/, '')));
+  }
+});
+
+program.parse(process.argv);
 
 
 process.on('SIGINT', function() {

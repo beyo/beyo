@@ -7,16 +7,15 @@
 
 var spawn = require('child_process').spawn
   , args = [ '--harmony', __dirname + '/_beyo.js' ]
-  , nodemon = false
+  , mod_nodemon = false
 ;
 
 process.argv.slice(2).forEach(function (arg){
   var flag = arg.split('=')[0];
 
   switch (flag) {
-    case '-n':
     case '--nodemon':
-      console.log("** DEV MODE");
+      mod_nodemon = true;
       break;
 
     default:
@@ -25,24 +24,39 @@ process.argv.slice(2).forEach(function (arg){
   }
 });
 
-if (nodemon) {
+if (mod_nodemon) {
+
+  //console.log(args);
 
   // FIXME : http://remysharp.com/2014/01/20/nodemon-1-0/
   //         https://github.com/remy/nodemon/blob/master/doc/requireable.md
 
-  var nodemon = require('nodemon');
-
-  nodemon({
-    script: 'app.js',
-    ext: 'js json'
+  var app = require('nodemon')({
+    script: args[1],
+    watch: ['app/', 'conf/', 'layouts/'],
+    execMap: {
+      'js': "node --harmony"
+    }
   });
 
-  nodemon.on('start', function () {
-    console.log('App has started');
-  }).on('quit', function () {
-    console.log('App has quit');
-  }).on('restart', function (files) {
-    console.log('App restarted due to: ', files);
+  console.log('* nodemon enabled');
+
+  app
+  //.on('start', function () {
+  //  console.log('App has started');
+  //})
+  //.on('quit', function () {
+  //  console.log('App has quit');
+  //})
+  .on('restart', function (files) {
+    if (files) {
+      console.log('* nodemon', files.length, 'file(s) changed');
+      files.forEach(function (file) {
+        console.log('  >', file);
+      });
+    } else {
+      console.log('* nodemon manual restart');
+    }
   });
 
 } else {

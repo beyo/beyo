@@ -13,7 +13,7 @@ var modulesLoader = require('./lib/loaders/modules');
 var env = process.env.NODE_ENV || 'development';
 var beyo = module.exports;
 var appRoot = module.exports.appRoot = process.cwd();
-var appPackage = require(appRoot + '/package');
+//var appPackage = require(appRoot + '/package');
 var events = module.exports.events = new (require('events').EventEmitter);
 
 

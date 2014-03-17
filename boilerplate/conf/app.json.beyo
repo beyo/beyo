@@ -1,0 +1,47 @@
+{
+  "AUTH_KEY":         "%%HASH_AUTH_KEY%%",
+  "SECURE_AUTH_KEY":  "%%HASH_SECURE_AUTH_KEY%%",
+  "LOGGED_IN_KEY":    "%%HASH_LOGGED_IN_KEY%%",
+  "NONCE_KEY":        "%%HASH_NONCE_KEY%%",
+  "AUTH_SALT":        "%%HASH_AUTH_SALT%%",
+  "SECURE_AUTH_SALT": "%%HASH_SECURE_AUTH_SALT%%",
+  "LOGGED_IN_SALT":   "%%HASH_LOGGED_IN_SALT%%",
+  "NONCE_SALT":       "%%HASH_NONCE_SALT%%",
+
+  "modulePaths": [
+    "app/modules"
+  ],
+
+  "logger": {
+    "levels": {
+      "critical": 6,
+      "error": 5,
+      "warning": 4,
+      "alert": 3,
+      "notice": 2,
+      "info": 1,
+      "debug": 0
+    },
+    "colors": {
+      "critical": "red",
+      "error": "bold red",
+      "warning": "yellow",
+      "alert": "bold yellow",
+      "notice": "bold green",
+      "info": "green",
+      "debug": "blue"
+    },
+    "level": "debug",
+    "transports": {
+      "console": {
+        "colorize": true,
+        "handleExceptions": true,
+        "json": false,
+        "level": "debug",
+        "prettyPrint": true,
+        "timestamp": false
+      }
+    },
+    "exitOnError": false
+  }
+}

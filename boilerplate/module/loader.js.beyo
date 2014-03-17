@@ -1,0 +1,7 @@
+/**
+Module loader
+*/
+
+module.exports = function * %%MODULE_NAME%%Loader(beyo, moduleData) {
+  return beyo.createSubApp('/%%MODULE_NAME%%');
+};
