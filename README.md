@@ -1,14 +1,24 @@
-## Beyo
+# Beyo
 
 Beyo Application framework built on top of koa and other goodies.
 
 
-## Features
+## Avant propos
+
+This project is an active ongoing project. There will be some changes over time,
+and I plan on synchronizing a sample project along with it. More documentation,
+and wiki are to be written also.
+
+
+## (Goal) Features
 
 * Asynchronous API through generator functions [`co`](https://github.com/visionmedia/co) compatible.
 * Modular application design using a simple HMVC pattern
+* hierarchical configuration
 * Unobstructive implementation, just the project structure guideline
 * Event driven
+* Plugin system
+* Middleware system
 
 
 ## Project structure
@@ -98,7 +108,7 @@ Please refer to the [Plugins](#Plugins) section for more information.
 ## Plugins
 
 Plugins are node modules exposing a single `GeneratorFunction`. Once configured, and
-executed, the result of each plugin are made available globally throughout the
+executed, the result of each plugin are directly made available globally throughout the
 application via the `beyo.plugins` object (using the application's configuration),
 or through each modules' `beyo.modules.<moduleName>.plugins` object.
 
@@ -107,9 +117,8 @@ the plugin's configuration `options`. Each plugin should return their values. Fo
 example, the plugin `foo` might look like this :
 
 ```javascript
-// file "plugins/foo.js"
+// module : node-module-foo
 module.exports = function * fooPlugin(beyo, options) {
-  // NOTE : if moduleData is undefined, the we are loading the plugin globally!
   var pluginValue = 'This is foo!';
 
   // init plugin stuff...
@@ -119,6 +128,9 @@ module.exports = function * fooPlugin(beyo, options) {
 ```
 
 If configured globally, this plugin will result in `beyo.plugins.foo == 'This is foo!'`.
+
+Plugins are installed normally using `npm install node-module-foo --save`, for example.
+
 
 ### Plugin Configuration
 
@@ -130,13 +142,65 @@ key. For example :
 ```
 {
   "plugins": {
-    foo: "Hello"
+    "foo": {
+      "module": "node-module-foo",
+      "options": {
+        text: "Hello"
+      }
+    }
   }
 }
 ```
 
 The above config (i.e. `beyo.config.plugins.foo` or `beyo.modules.?.config.plugins.foo`)
-will invoke the `foo` plugin with it's `config == "Hello"`.
+will invoke the `node-module-foo` module with it's `options == { text: "Hello" }`.
+
+
+## Middlewares
+
+Middlewares are like plugins, but they are intended to be used with koa handlers.
+Actually, the are loaded exactly like plugins (at the moment), but they are separated
+to avoid confusion, name clash or other mistakes, as they are not intended to be used
+the same way as plugins!
+
+One key difference is how they are, in fact, used; middlewares should *always* return
+generator functions (where plugins may return anything). Any middleware not complying
+to this restriction may raise an exception at load-time. For example :
+
+```javascript
+// module : node-module-foo
+module.exports = function * authMiddleware(beyo, options) {
+  // prepare middle options...
+
+  return function * auth(next) {
+    // check if this.req is an auth user, throw an error if not
+
+    yield next();
+  };
+};
+```
+
+If configured globally, this middleware will result in `beyo.middlewares.bar == [Function auth]`,
+and may be used directly with `app.use(beyo.middlewares.auth);`.
+
+Middlewares are installed using `npm`, like plugins, too.
+
+
+### Middleware Configuration
+
+Middlewares are configured like plugins.
+
+```
+{
+  "middlewares": {
+    "bar": {
+      "module": "node-module-bar",
+      "options": {
+      }
+    }
+  }
+}
+```
 
 
 ## Application Modules

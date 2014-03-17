@@ -5,10 +5,11 @@
  * when found, before invoking the "real" _mocha(1) executable.
  */
 
-var spawn = require('child_process').spawn
-  , args = [ '--harmony', __dirname + '/_beyo.js' ]
-  , mod_nodemon = false
-;
+var spawn = require('child_process').spawn;
+var args = [ '--harmony', __dirname + '/_beyo.js' ];
+var mod_nodemon = false;
+var relative = require('path').relative;
+
 
 process.argv.slice(2).forEach(function (arg){
   var flag = arg.split('=')[0];
@@ -33,13 +34,12 @@ if (mod_nodemon) {
 
   var app = require('nodemon')({
     script: args[1],
-    watch: ['app/', 'conf/', 'layouts/'],
     execMap: {
-      'js': "node --harmony"
+      'js': [process.argv[0], args[0]].join(' ')
     }
   });
 
-  console.log('* nodemon enabled');
+  console.log('[nodemon] Starting application');
 
   app
   //.on('start', function () {
@@ -50,12 +50,12 @@ if (mod_nodemon) {
   //})
   .on('restart', function (files) {
     if (files) {
-      console.log('* nodemon', files.length, 'file(s) changed');
+      console.log('[nodemon]', files.length, 'file' + (files.length > 1 ? 's' : '') + ' changed');
       files.forEach(function (file) {
-        console.log('  >', file);
+        console.log('>', './' + relative(process.cwd(), file));
       });
     } else {
-      console.log('* nodemon manual restart');
+      console.log('[nodemon] manual restart requested');
     }
   });
 
