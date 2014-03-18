@@ -21,6 +21,16 @@ and wiki are to be written also.
 * Middleware system
 
 
+## Create a New Application
+
+1. Install Beyo globally : `npm install -g beyo`
+2. Create your project base directory : `mkdir project`
+3. Initialize your application : `beyo init`
+4. Run your application : `beyo`
+5. Load the application in the browser at `http://localhost:4044/`
+6. <kbd>CTRL+C</kbd> to shut down
+
+
 ## Project structure
 
 A Beyo application project have this structure.
@@ -98,6 +108,9 @@ root directory. *(Mandatory, typically `['app/modules']`)*
 
 * **plugins** *{Object}* : Specify which plugins will be loaded and available globally.
 Please refer to the [Plugins](#Plugins) section for more information.
+
+* **middlewares** *{Object}* : Specify which middlewares will be loaded and available globally.
+Please refer to the [Middlewares](#Middlewares) section for more information.
 
 
 ### Module Specific Configuration

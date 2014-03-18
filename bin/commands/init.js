@@ -1,8 +1,12 @@
 
+const APPLICATION_NAME_REGEXP = /^[a-z]+[a-zA-Z0-9-_.]*$/;
+const MODULE_NAME_REGEXP = /^[a-z]+[a-zA-Z0-9]*$/;
+
 var crypto = require('crypto');
 var co = require('co');
-var fsTools = require('../../lib/util/fs-tools');
 var basename = require('path').basename;
+var logger = require('../../').logger;
+var install = require('../../lib/util/installer').install;
 
 var appStruct = {
   'app': {
@@ -10,7 +14,9 @@ var appStruct = {
     'modules': {
       'demo': {
         'conf': {},
-        'controllers': {},
+        'controllers': {
+          'index.js': 'module/controller/action.js.beyo'
+        },
         'models': {},
         'views': {},
         'index.js': 'module/loader.js.beyo'
@@ -25,25 +31,29 @@ var appStruct = {
     'css': {},
     'js': {},
     'img': {}
-  }
+  },
+  'package.json': 'package.json.beyo',
+  'README.md': 'README.md.beyo'
 };
+var appDependencies = [
+  //'grunt',
+  //'beyo-plugin-i18n',
+  //'beyo-middleware-hbs'
+];
 
 
 module.exports = function init(command) {
   command
     .description('Initialize a new project')
-    .option('-n, --app-name <name>', 'The project name [' + basename(process.cwd()) + ']', basename(process.cwd()))
-    .option('-m, --module-name <name>', 'The default module name [default]', 'default')
+    .option('-n, --app-name <name>', 'the project name [' + basename(process.cwd()) + ']', basename(process.cwd()))
+    .option('-m, --module-name <name>', 'the default module name [default]', 'default')
+    .option('-P, --create-package [optional]', 'create a package.json file', false)
+    .option('-I, --no-npm-install [optional]', 'do not run npm install', false)
     .action(_initAction)
   ;
 };
 
-function hash() {
-  return crypto.randomBytes(128).toString('base64')
-}
-
 function _initAction(args) {
-  var basePath = process.cwd();
   var context = {
     'hash_auth_key': hash(),
     'hash_secure_auth_key': hash(),
@@ -54,24 +64,47 @@ function _initAction(args) {
     'hash_logged_in_salt': hash(),
     'hash_nonce_salt': hash(),
 
-    'app_name': args.appName,
-    'module_name': args.moduleName
+    'app_name': validateApplicationName(args.appName),
+    'module_name': validateModuleName(args.moduleName)
   };
 
+  this.preventStart = true;
+
   co(function * () {
-    yield fsTools.createFsStruct(basePath, appStruct, context);
-    yield createPackage();
+    yield install({
+      basePath: process.cwd(),
+      fileStruct: appStruct,
+      context: context,
+      createPackage: args.createPackage,
+      dependencies: args.npmInstall && appDependencies
+    });
   })(function (err) {
     if (err) {
-      console.log(err);
+      logger.log('error', err);
     } else {
-      console.log("Done!");
+      logger.log('debug', 'Initialization complete!');
     }
   });
 }
 
 
-function * createPackage() {
 
+function hash() {
+  return crypto.randomBytes(128).toString('base64')
+}
 
+function validateApplicationName(appName) {
+  if (!APPLICATION_NAME_REGEXP.test(appName)) {
+    throw new Error('Invalid application name : ' + appName);
+  }
+
+  return appName;
+}
+
+function validateModuleName(moduleName) {
+  if (!MODULE_NAME_REGEXP.test(moduleName)) {
+    throw new Error('Invalid module name : ' + moduleName);
+  }
+
+  return moduleName;
 }

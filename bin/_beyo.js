@@ -30,21 +30,25 @@ require('fs').readdirSync(commandPath).sort(function (a, b) {
 program.parse(process.argv);
 
 
-process.on('SIGINT', function() {
-  beyo.logger.log('info', 'Interruption signal received, shutting down now');
-  process.exit(0);
-});
+if (!program.preventStart) {
 
-// init app
-co(function * () {
-  yield (require(beyo.appRoot + '/app'))(beyo);
-})(function (err) {
-  if (err) {
-    beyo.logger.log('error', err.stack || err);
-    process.exit(-1);
-  } else {
-    // listen
-    beyo.app.listen(program.port, program.host);
-    beyo.logger.log('info', 'Listening on %s:%s', program['interface'], program['port']);
-  }
-});
+  process.on('SIGINT', function() {
+    beyo.logger.log('info', 'Interruption signal received, shutting down now');
+    process.exit(0);
+  });
+
+  // init app
+  co(function * () {
+    yield (require(beyo.appRoot + '/app'))(beyo);
+  })(function (err) {
+    if (err) {
+      beyo.logger.log('error', err.stack || err);
+      process.exit(-1);
+    } else {
+      // listen
+      beyo.app.listen(program.port, program.host);
+      beyo.logger.log('info', 'Listening on %s:%s', program['interface'], program['port']);
+    }
+  });
+
+}

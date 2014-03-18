@@ -27,10 +27,8 @@ process.argv.slice(2).forEach(function (arg){
 
 if (mod_nodemon) {
 
-  //console.log(args);
-
-  // FIXME : http://remysharp.com/2014/01/20/nodemon-1-0/
-  //         https://github.com/remy/nodemon/blob/master/doc/requireable.md
+  // FIXME : manually restarting the application throws an exception
+  //         see: https://github.com/remy/nodemon/issues/289
 
   var app = require('nodemon')({
     script: args[1],
