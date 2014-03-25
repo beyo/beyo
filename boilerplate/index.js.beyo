@@ -1,0 +1,5 @@
+
+module.exports = function * main(beyo) {
+  yield beyo.init(require);
+  yield require('./app')(beyo);
+}

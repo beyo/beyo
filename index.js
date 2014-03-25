@@ -1,5 +1,6 @@
 
 var fs = require('fs');
+var pathJoin = require('path').join;
 var glob = require('co-glob');
 var koa = require('koa');
 var mount = require('koa-mount');
@@ -28,7 +29,7 @@ module.exports.init = function * init(appRequire) {
   });
 
   beyo.appRequire = appRequire;
-  beyo.config = yield configLoader(appRoot + '/conf', beyo);
+  beyo.config = yield configLoader(pathJoin(appRoot, 'app', 'conf'), beyo);
   beyo.logger = yield loggerLoader(beyo);
   beyo.plugins = yield pluginsLoader(beyo, beyo.config.plugins);
   beyo.middlewares = yield middlewaresLoader(beyo, beyo.config.middlewares);

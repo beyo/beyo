@@ -5,8 +5,9 @@
  * when found, before invoking the "real" _mocha(1) executable.
  */
 
+var pathJoin = require('path').join;
 var spawn = require('child_process').spawn;
-var args = [ '--harmony', __dirname + '/_beyo.js' ];
+var args = [ '--harmony', pathJoin(__dirname, '_beyo.js') ];
 var mod_nodemon = false;
 var relative = require('path').relative;
 
@@ -32,6 +33,7 @@ if (mod_nodemon) {
 
   var app = require('nodemon')({
     script: args[1],
+    //exec: [process.argv[0]].concat(args).join(' ')
     execMap: {
       'js': [process.argv[0], args[0]].join(' ')
     }

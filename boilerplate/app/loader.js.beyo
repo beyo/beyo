@@ -4,7 +4,18 @@ Application launcher
 
 module.exports = function * appStart(beyo) {
 
-  yield beyo.init();
+  // app global middlewares
+
+  if (beyo.config.staticPaths) {
+    if (!(beyo.config.staticPaths instanceof Array)) {
+      beyo.app.use(serve(beyo.config.staticPaths));
+    } else {
+      beyo.config.staticPaths.forEach(function (path) {
+        beyo.app.use(serve(path));
+      });
+    }
+  }
+
   yield beyo.initApplication();
 
 };

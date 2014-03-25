@@ -10,7 +10,9 @@ var install = require('../../lib/util/installer').install;
 
 var appStruct = {
   'app': {
-    'index.js': 'app/loader.js.beyo',
+    'conf': {
+      'index.json': 'conf/app.json.beyo'
+    },
     'modules': {
       'demo': {
         'conf': {},
@@ -21,10 +23,8 @@ var appStruct = {
         'views': {},
         'index.js': 'module/loader.js.beyo'
       }
-    }
-  },
-  'conf': {
-    'index.json': 'conf/app.json.beyo'
+    },
+    'index.js': 'app/loader.js.beyo'
   },
   'layouts': {},
   'pub': {
@@ -33,7 +33,8 @@ var appStruct = {
     'img': {}
   },
   'package.json': 'package.json.beyo',
-  'README.md': 'README.md.beyo'
+  'README.md': 'README.md.beyo',
+  'index.js': 'index.js.beyo'
 };
 var appDependencies = [
   //'grunt',

@@ -3,7 +3,7 @@
 Beyo Application framework built on top of koa and other goodies.
 
 
-## Avant propos
+## Preamble
 
 This project is an active ongoing project. There will be some changes over time,
 and I plan on synchronizing a sample project along with it. More documentation,
@@ -26,9 +26,11 @@ and wiki are to be written also.
 1. Install Beyo globally : `npm install -g beyo`
 2. Create your project base directory : `mkdir project`
 3. Initialize your application : `beyo init`
-4. Run your application : `beyo`
+4. Run your application : `beyo start`
 5. Load the application in the browser at `http://localhost:4044/`
 6. <kbd>CTRL+C</kbd> to shut down
+
+That's it!
 
 
 ## Project structure

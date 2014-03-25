@@ -8,8 +8,12 @@
   "LOGGED_IN_SALT":   "%%HASH_LOGGED_IN_SALT%%",
   "NONCE_SALT":       "%%HASH_NONCE_SALT%%",
 
+  "staticPaths": [
+    "./pub"
+  ],
+
   "modulePaths": [
-    "app/modules"
+    "./app/modules"
   ],
 
   "logger": {
