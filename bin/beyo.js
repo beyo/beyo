@@ -6,10 +6,11 @@
  */
 
 var pathJoin = require('path').join;
+var relative = require('path').relative;
 var spawn = require('child_process').spawn;
+var debug = require('debug')('beyo');
 var args = [ '--harmony', pathJoin(__dirname, '_beyo.js') ];
 var mod_nodemon = false;
-var relative = require('path').relative;
 
 
 process.argv.slice(2).forEach(function (arg){
@@ -33,13 +34,13 @@ if (mod_nodemon) {
 
   var app = require('nodemon')({
     script: args[1],
-    //exec: [process.argv[0]].concat(args).join(' ')
+    //args: args.slice(2),
     execMap: {
       'js': [process.argv[0], args[0]].join(' ')
     }
   });
 
-  console.log('[nodemon] Starting application');
+  debug('[nodemon] Starting application');
 
   app
   //.on('start', function () {
@@ -50,12 +51,12 @@ if (mod_nodemon) {
   //})
   .on('restart', function (files) {
     if (files) {
-      console.log('[nodemon]', files.length, 'file' + (files.length > 1 ? 's' : '') + ' changed');
+      debug('[nodemon] %d file%s changed', files.length, files.length > 1 ? 's' : '');
       files.forEach(function (file) {
-        console.log('>', './' + relative(process.cwd(), file));
+        debug('> %s', pathJoin('.', relative(process.cwd(), file)));
       });
     } else {
-      console.log('[nodemon] manual restart requested');
+      debug('[nodemon] manual restart requested');
     }
   });
 

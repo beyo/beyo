@@ -1,6 +1,9 @@
 
 var co = require('co');
+var fs = require('co-fs');
+var pathJoin = require('path').join;
 var beyo = require('../..');
+
 
 module.exports = function init(command) {
   command
@@ -19,7 +22,11 @@ function _initAction(args) {
 
   // init app
   co(function * () {
-    yield require(beyo.appRoot)(beyo);
+    if (yield fs.exists(pathJoin(beyo.appRoot, 'index.js'))) {
+      yield require(beyo.appRoot)(beyo);
+    } else {
+      throw "Application not found! Did you forget to initialize it?\nType `beyo init` to create a new application.\n";
+    }
   })(function (err) {
     if (err) {
       beyo.logger.log('error', err.stack || err);

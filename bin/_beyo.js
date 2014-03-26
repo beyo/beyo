@@ -9,8 +9,6 @@ var commandPath = __dirname + '/commands/';
 
 // options
 
-console.log("Beyo", process.argv, '"');
-
 
 if (process.argv.length <= 2) {
   process.argv.push('-h');
