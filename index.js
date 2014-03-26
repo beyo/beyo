@@ -1,5 +1,5 @@
 
-var fs = require('fs');
+var fs = require('co-fs');
 var pathJoin = require('path').join;
 var glob = require('co-glob');
 var koa = require('koa');
@@ -13,11 +13,21 @@ var modulesLoader = require('./lib/loaders/modules');
 var env = process.env.NODE_ENV || 'development';
 var beyo = module.exports;
 var appRoot = module.exports.appRoot = process.cwd();
-//var appPackage = require(appRoot + '/package');
 var events = module.exports.events = new (require('events').EventEmitter);
 
 
-module.exports.init = function * init(appRequire) {
+
+module.exports.init = init;
+module.exports.initApplication = initApplication;
+module.exports.createSubApp = createSubApp;
+
+
+/**
+Init Beyo
+
+@param {Function} appRequire    the application's require function
+*/
+function * init(appRequire) {
   events.emit('beforeInitialize', beyo);
 
   Object.defineProperty(module.exports, 'app', {
@@ -28,24 +38,46 @@ module.exports.init = function * init(appRequire) {
   });
 
   beyo.appRequire = appRequire;
+
   beyo.config = yield configLoader(pathJoin(appRoot, 'app', 'conf'), beyo);
+
+  yield loadApplicationPackageInformation(beyo);
+
   beyo.logger = yield loggerLoader(beyo);
   beyo.plugins = yield pluginsLoader(beyo, beyo.config.plugins);
 
   events.emit('afterInitialize', beyo);
-};
+}
 
-module.exports.initApplication = function * initApplication() {
+/**
+Initialize application modules
+*/
+function * initApplication() {
   beyo.modules = yield modulesLoader(beyo);
-};
+}
 
+
+function * loadApplicationPackageInformation(beyo) {
+  var packagePath = pathJoin(appRoot, 'package.json');
+  if (yield fs.exists(packagePath)) {
+    var pkg = require(packagePath);
+
+    beyo.config.app = {
+      name: pkg.name,
+      version: pkg.version,
+      description: pkg.description,
+      license: pkg.license
+    };
+
+  }
+}
 
 /**
 Create a new koa instance, mount it at path and return it
 */
-module.exports.createSubApp = function createSubApp(path, baseApp) {
+function createSubApp(path, baseApp) {
   return _createApp(path, baseApp);
-};
+}
 
 
 function _createApp(mountPath, baseApp) {
