@@ -1,0 +1,33 @@
+{
+  "structure": {
+    "app": {
+      "conf": {
+        "index.json": "conf/app.json.beyo"
+      },
+      "modules": {
+        "demo": {
+          "conf": {},
+          "controllers": {
+            "index.js": "module/controller/action.js.beyo"
+          },
+          "models": {},
+          "views": {},
+          "index.js": "module/loader.js.beyo"
+        }
+      },
+      "index.js": "app/loader.js.beyo"
+    },
+    "layouts": {},
+    "pub": {
+      "css": {},
+      "js": {},
+      "img": {}
+    },
+    "package.json": "package.json.beyo",
+    "README.md": "README.md.beyo",
+    "index.js": "index.js.beyo"
+  },
+  "dependencies": [
+    "koa-static"
+  ]
+}

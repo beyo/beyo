@@ -2,6 +2,8 @@
 Application launcher
 */
 
+var serve = require('koa-static');
+
 module.exports = function * appStart(beyo) {
 
   // app global middlewares

@@ -1,6 +1,6 @@
 {
   "name": "beyo",
-  "version": "0.0.0-20140326",
+  "version": "0.0.0-20140326.2",
   "description": "Beyo Application framework.",
   "author": "Yanick Rochon <yanick.rochon@gmail.com>",
   "keywords": [
@@ -32,8 +32,8 @@
     "commander": "~2.1.0",
     "co": "~3.0.4",
     "co-fs": "~1.2.0",
-    "co-glob": "0.0.1",
-    "co-suspend": "0.0.1",
+    "co-glob": "~0.0.1",
+    "co-suspend": "0.0.7",
     "koa": "~0.5.1",
     "koa-mount": "~1.2.3",
     "mocha": "^1.17.1",
@@ -41,7 +41,8 @@
     "semicov": "^0.1.1",
     "winston": "^0.7.2",
     "npm": "^1.4.4",
-    "debug": "^0.7.4"
+    "debug": "^0.7.4",
+    "should": "^3.1.4"
   },
   "devDependencies": {
     "mocha": "~1.17.1",

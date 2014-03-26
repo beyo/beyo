@@ -8,39 +8,8 @@ var basename = require('path').basename;
 var logger = require('../../').logger;
 var install = require('../../lib/util/installer').install;
 
-var appStruct = {
-  'app': {
-    'conf': {
-      'index.json': 'conf/app.json.beyo'
-    },
-    'modules': {
-      'demo': {
-        'conf': {},
-        'controllers': {
-          'index.js': 'module/controller/action.js.beyo'
-        },
-        'models': {},
-        'views': {},
-        'index.js': 'module/loader.js.beyo'
-      }
-    },
-    'index.js': 'app/loader.js.beyo'
-  },
-  'layouts': {},
-  'pub': {
-    'css': {},
-    'js': {},
-    'img': {}
-  },
-  'package.json': 'package.json.beyo',
-  'README.md': 'README.md.beyo',
-  'index.js': 'index.js.beyo'
-};
-var appDependencies = [
-  //'grunt',
-  //'beyo-plugin-i18n',
-  //'beyo-middleware-hbs'
-];
+var appStruct;
+var appDependencies;
 
 
 module.exports = function init(command) {
@@ -50,6 +19,7 @@ module.exports = function init(command) {
     .option('-m, --module-name <name>', 'the default module name [default]', 'default')
     .option('-P, --create-package [optional]', 'create a package.json file', false)
     .option('-I, --no-npm-install [optional]', 'do not run npm install', false)
+    .option('-d, --load-def <name>', 'use definition file [default]', 'default')
     .action(_initAction)
   ;
 };
@@ -74,10 +44,10 @@ function _initAction(args) {
   co(function * () {
     yield install({
       basePath: process.cwd(),
-      fileStruct: appStruct,
+      definition: args.loadDef,
       context: context,
       createPackage: args.createPackage,
-      dependencies: args.npmInstall && appDependencies
+      npmInstall: args.npmInstall
     });
   })(function (err) {
     if (err) {
