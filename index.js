@@ -7,7 +7,6 @@ var mount = require('koa-mount');
 
 var configLoader = require('./lib/loaders/config');
 var pluginsLoader = require('./lib/loaders/plugins');
-var middlewaresLoader = require('./lib/loaders/middlewares');
 var loggerLoader = require('./lib/loaders/logger');
 var modulesLoader = require('./lib/loaders/modules');
 
@@ -32,7 +31,6 @@ module.exports.init = function * init(appRequire) {
   beyo.config = yield configLoader(pathJoin(appRoot, 'app', 'conf'), beyo);
   beyo.logger = yield loggerLoader(beyo);
   beyo.plugins = yield pluginsLoader(beyo, beyo.config.plugins);
-  beyo.middlewares = yield middlewaresLoader(beyo, beyo.config.middlewares);
 
   events.emit('afterInitialize', beyo);
 };

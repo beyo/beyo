@@ -14,11 +14,10 @@ and wiki are to be written also.
 
 * Asynchronous API through generator functions [`co`](https://github.com/visionmedia/co) compatible.
 * Modular application design using a simple HMVC pattern
-* hierarchical configuration
+* Hierarchical configuration
 * Unobstructive implementation, just the project structure guideline
 * Event driven
 * Plugin system
-* Middleware system
 
 
 ## Create a New Application
