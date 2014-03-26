@@ -34,7 +34,7 @@ if (mod_nodemon) {
 
   var app = require('nodemon')({
     script: args[1],
-    //args: args.slice(2),
+    args: args.slice(2),
     execMap: {
       'js': [process.argv[0], args[0]].join(' ')
     }

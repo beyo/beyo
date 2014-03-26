@@ -7,8 +7,10 @@
 var program = require('commander');
 var commandPath = __dirname + '/commands/';
 
-// options
+// hack : override the program's name
+process.argv[1] = process.argv[1].replace('_beyo.js', 'beyo.js');
 
+// options
 
 if (process.argv.length <= 2) {
   process.argv.push('-h');

@@ -25,7 +25,8 @@ function _initAction(args) {
     if (yield fs.exists(pathJoin(beyo.appRoot, 'index.js'))) {
       yield require(beyo.appRoot)(beyo);
     } else {
-      throw "Application not found! Did you forget to initialize it?\nType `beyo init` to create a new application.\n";
+      throw "Application not found! Did you forget to initialize it?\n" +
+            "Type `beyo init` to create a new application.\n";
     }
   })(function (err) {
     if (err) {
