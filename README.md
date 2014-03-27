@@ -23,7 +23,7 @@ and wiki are to be written also.
 ## Create a New Application
 
 1. Install Beyo globally : `npm install -g beyo`
-2. Create your project base directory : `mkdir project`
+2. Create your project base directory : `mkdir project`, then `cd project`
 3. Initialize your application : `beyo init`
 4. Run your application : `beyo start`
 5. Load the application in the browser at `http://localhost:4044/`
