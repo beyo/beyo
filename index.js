@@ -5,6 +5,7 @@ var glob = require('co-glob');
 var koa = require('koa');
 var mount = require('koa-mount');
 
+var appLoader = require('./lib/loaders/app');
 var configLoader = require('./lib/loaders/config');
 var pluginsLoader = require('./lib/loaders/plugins');
 var loggerLoader = require('./lib/loaders/logger');
@@ -53,6 +54,8 @@ function * init(appRequire) {
 Initialize application modules
 */
 function * initApplication() {
+  yield appLoader(beyo);
+
   beyo.modules = yield modulesLoader(beyo);
 }
 
@@ -68,7 +71,6 @@ function * loadApplicationPackageInformation(beyo) {
       description: pkg.description,
       license: pkg.license
     };
-
   }
 }
 
