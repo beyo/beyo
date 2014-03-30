@@ -1,0 +1,18 @@
+{
+  "watch": [
+    "app",
+    "lib",
+    "plugins",
+    "pub/js",
+    "pub/css"
+  ],
+  "ignore": [
+    ".git",
+    "logs",
+    "node_modules",
+    "test"
+  ],
+  "ext": "css js json coeft.html",
+  "delayTime": 1000,
+  "stdin": true
+}

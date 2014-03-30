@@ -23,11 +23,24 @@
       "js": {},
       "img": {}
     },
+    "bower.json": "bower.json.beyo",
+    "nodemon.json": "nodemon.json.beyo",
     "package.json": "package.json.beyo",
     "README.md": "README.md.beyo",
-    "index.js": "index.js.beyo"
+    "index.js": "index.js.beyo",
+    "gruntfile.js": "gruntfile.js.beyo"
   },
   "dependencies": [
-    "koa-static"
+    "co-efficient",
+    "koa-static",
+    "mongoose",
+    "grunt-cli",
+    "grunt-contrib-uglify",
+    "grunt-contrib-copy",
+    "grunt-contrib-clean"
+  ],
+  "shellExec": [
+    "bower install",
+    "./node_modules/.bin/grunt update"
   ]
 }

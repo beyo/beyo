@@ -19,6 +19,7 @@ module.exports = function init(command) {
     .option('-m, --module-name <name>', 'the default module name [default]', 'default')
     .option('-P, --create-package [optional]', 'create a package.json file', false)
     .option('-I, --no-npm-install [optional]', 'do not run npm install', false)
+    .option('-X, --no-shell-exec [optional]', 'do not run shell commands in def. file', false)
     .option('-d, --load-def <name>', 'use definition file [default]', 'default')
     .action(_initAction)
   ;
@@ -47,7 +48,8 @@ function _initAction(args) {
       definition: args.loadDef,
       context: context,
       createPackage: args.createPackage,
-      npmInstall: args.npmInstall
+      npmInstall: args.npmInstall,
+      shellExec: args.shellExec
     });
   })(function (err) {
     if (err) {

@@ -23,11 +23,13 @@ and wiki are to be written also.
 ## Create a New Application
 
 1. Install Beyo globally : `npm install -g beyo`
-2. Create your project base directory : `mkdir project`, then `cd project`
-3. Initialize your application : `beyo init`
-4. Run your application : `beyo start`
-5. Load the application in the browser at `http://localhost:4044/`
-6. <kbd>CTRL+C</kbd> to shut down
+1. Install [Bower](http://bower.io/) : `npm install -g bower`
+3. Create your project base directory : `mkdir project`, then `cd project`
+4. Initialize your application : `beyo init` (requires [MongoDb](https://www.mongodb.org/),
+   install on [Ubuntu](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/).)
+5. Run your application : `beyo start`
+6. Load the application in the browser at `http://localhost:4044/`
+7. <kbd>CTRL+C</kbd> to shut down
 
 That's it!
 
