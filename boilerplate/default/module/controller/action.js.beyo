@@ -1,8 +1,0 @@
-
-module.exports = function * indexController(beyo, app, moduleInfo) {
-
-  app.use(function * () {
-    this.body = "Horray! Your application is responding to requests!";
-  });
-
-};
