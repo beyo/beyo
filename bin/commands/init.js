@@ -20,7 +20,7 @@ module.exports = function init(command) {
     .option('-P, --create-package [optional]', 'create a package.json file', false)
     .option('-I, --no-npm-install [optional]', 'do not run npm install', false)
     .option('-X, --no-shell-exec [optional]', 'do not run shell commands in def. file', false)
-    .option('-s, --stub <path>', 'use stub path (file, http, etc.)', validateStubLocation)
+    .option('-r, --fixture-repository <git-repo>', 'use git fixture repo')
     .action(_initAction)
   ;
 };
@@ -40,22 +40,16 @@ function _initAction(args) {
     'module_name': validateModuleName(args.moduleName)
   };
 
-  if (!args.stub) {
-    throw 'No stub specified!';
+  if (!args.fixtureRepository) {
+    throw 'No fixture repository specified!';
   }
 
   this.preventStart = true;
 
   co(function * () {
-    if (args.stub.type === 'http' || args.stub.type === 'https') {
-      args.definition = yield (installer.downloadStub)(args.stub.path);
-    } else {
-      args.definition = args.stub.path;
-    }
-
     yield (installer.install)({
       basePath: process.cwd(),
-      definition: args.loadDef,
+      definition: args.fixtureRepository,
       context: context,
       createPackage: args.createPackage,
       npmInstall: args.npmInstall,
@@ -68,26 +62,6 @@ function _initAction(args) {
       logger.log('debug', 'Initialization complete!');
     }
   });
-}
-
-
-function validateStubLocation(value) {
-  if (typeof value === 'string') {
-    var matches = /^((.*?):\/\/)?(.*)$/.exec(value);
-
-    value = {
-      type: matches && matches[2] || 'file',
-      path: value
-    };
-
-    if (['file', 'http', 'https'].indexOf(value.type) === -1) {
-      throw new Error('Unsupported type `' + value.type + '`');
-    }
-  } else {
-    value = false;
-  }
-
-  return value;
 }
 
 function hash() {
