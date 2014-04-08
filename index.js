@@ -46,6 +46,7 @@ function * init(appRequire) {
 
   beyo.logger = yield loggerLoader(beyo);
   beyo.plugins = yield pluginsLoader(beyo, beyo.config.plugins);
+  beyo.env = env;
 
   events.emit('afterInitialize', beyo);
 }
