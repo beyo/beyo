@@ -5,6 +5,7 @@
  * when found, before invoking the "real" _mocha(1) executable.
  */
 
+var fs = require('fs');
 var pathJoin = require('path').join;
 var relative = require('path').relative;
 var spawn = require('child_process').spawn;
@@ -28,17 +29,23 @@ process.argv.slice(2).forEach(function (arg){
 });
 
 if (mod_nodemon) {
+  var nodemonConfig = pathJoin(process.cwd(), 'nodemon.json');
 
   // FIXME : manually restarting the application throws an exception
   //         see: https://github.com/remy/nodemon/issues/289
+  if (fs.existsSync(nodemonConfig)) {
+    nodemonConfig = require(nodemonConfig);
+  } else {
+    nodemonConfig = {};
+  }
 
-  var app = require('nodemon')({
-    script: args[1],
-    args: args.slice(2),
-    execMap: {
-      'js': [process.argv[0], args[0]].join(' ')
-    }
-  });
+  nodemonConfig['script'] = args[1];
+  nodemonConfig['args'] = args.slice(2);
+  nodemonConfig['execMap'] =  {
+    'js': [process.argv[0], args[0]].join(' ')
+  };
+
+  var app = require('nodemon')(nodemonConfig);
 
   debug('[nodemon] Starting application');
 
