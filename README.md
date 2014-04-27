@@ -7,14 +7,15 @@ Beyo Application framework built on top of koa and other goodies.
 
 This project is an active ongoing project. There will be some changes over time,
 and I plan on synchronizing a sample project along with it. More documentation,
-and wiki are to be written also.
+and wiki are to be written also. Therefore, this is not a production-ready
+framework and all contributions welcome!
 
 
 ## (Goal) Features
 
 * Asynchronous API through generator functions [`co`](https://github.com/visionmedia/co) compatible.
 * Modular application design using a simple HMVC pattern
-* Hierarchical configuration
+* Hierarchical configuration, environment aware
 * Unobstructive implementation, just the project structure guideline
 * Event driven
 * Plugin system
@@ -25,8 +26,7 @@ and wiki are to be written also.
 1. Install Beyo globally : `npm install -g beyo`
 1. Install [Bower](http://bower.io/) : `npm install -g bower`
 3. Create your project base directory : `mkdir project`, then `cd project`
-4. Initialize your application : `beyo init` (requires [MongoDb](https://www.mongodb.org/),
-   install on [Ubuntu](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/).)
+4. Initialize your application : `beyo init`
 5. Run your application : `beyo start`
 6. Load the application in the browser at `http://localhost:4044/`
 7. <kbd>CTRL+C</kbd> to shut down
@@ -36,7 +36,7 @@ That's it!
 
 ## Project structure
 
-A Beyo application project have this structure.
+A typical Beyo application project have this structure.
 
 ```
 - ./project-root
@@ -44,21 +44,27 @@ A Beyo application project have this structure.
   |  +- /conf
   |  |  +- index.json
   |  +- /layouts
+  |  +- /locales
   |  +- /modules
-  |  |  +- demo
-  |  |  |  +- /conf
-  |  |  |  +- /controllers
-  |  |  |  +- /models
-  |  |  |  +- /services
-  |  |  |  +- /views
-  | + +- index.js
+  |  |  +- /demo
+  |  |     +- /conf
+  |  |     +- /controllers
+  |  |     +- /locales
+  |  |     +- /models
+  |  |     +- /pub
+  |  |     +- /services
+  |  |     +- /views
+  |  |     +- index.js
+  |  +- index.js
+  +- /bin
+  |  +- /commands
   +- /lib
   +- /plugins
   +- /pub
   |  +- /css
   |  +- /js
   |  +- /img
-  +- test
+  +- /test
   +- index.js
   +- nodemon.json
 ```
@@ -117,8 +123,16 @@ root directory. *(Mandatory, typically `['app/modules']`)*
 * **plugins** *{Object}* : Specify which plugins will be loaded and available globally.
 Please refer to the [Plugins](#Plugins) section for more information.
 
-* **middlewares** *{Object}* : Specify which middlewares will be loaded and available globally.
-Please refer to the [Middlewares](#Middlewares) section for more information.
+* **server** *{Object}* : Specify the server settings. Typically, the host and port that
+the server should bind and listen incoming clients from. For example :
+  ```
+  {
+    "server": {
+      "host": "0.0.0.0",
+      "port": 4044
+    }
+  }
+  ```
 
 
 ### Module Specific Configuration
@@ -128,10 +142,11 @@ Please refer to the [Middlewares](#Middlewares) section for more information.
 
 ## Plugins
 
-Plugins are node modules exposing a single `GeneratorFunction`. Once configured, and
-executed, the result of each plugin are directly made available globally throughout the
+Plugins are node modules exposing a single *yieldable* value. Once configured, and
+executed, the result of each plugins are directly made available globally throughout the
 application via the `beyo.plugins` object (using the application's configuration),
-or through each modules' `beyo.modules.<moduleName>.plugins` object.
+or through each modules' `beyo.modules.<moduleName>.plugins` object, unless the plugin's
+yieldable returns `undefined`.
 
 Each plugin module's function will receive two arguments : the `beyo` object, and
 the plugin's configuration `options`. Each plugin should return their values. For

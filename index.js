@@ -39,6 +39,7 @@ function * init(appRequire) {
   });
 
   beyo.appRequire = appRequire;
+  beyo.env = env;
 
   beyo.config = yield configLoader(pathJoin(appRoot, 'app', 'conf'), beyo);
 
@@ -46,7 +47,6 @@ function * init(appRequire) {
 
   beyo.logger = yield loggerLoader(beyo);
   beyo.plugins = yield pluginsLoader(beyo, beyo.config.plugins);
-  beyo.env = env;
 
   events.emit('afterInitialize', beyo);
 }

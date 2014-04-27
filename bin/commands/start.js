@@ -2,19 +2,17 @@
 var co = require('co');
 var fs = require('co-fs');
 var pathJoin = require('path').join;
-var beyo = require('../..');
-
 
 module.exports = function init(command) {
   command
     .description('Start the application')
-    .option('-i, --interface <address>', 'specify the network interface to use [0.0.0.0]', '0.0.0.0')
-    .option('-p, --port <port>', 'specify the port [4044]', '4044')
     .action(_initAction)
   ;
 };
 
 function _initAction(args) {
+  var beyo = require('../..');
+
   process.on('SIGINT', function() {
     beyo.logger.log('info', 'Interruption signal received, shutting down now');
     process.exit(0);
@@ -28,14 +26,21 @@ function _initAction(args) {
       throw "Application not found! Did you forget to initialize it?\n" +
             "Type `beyo init` to create a new application.\n";
     }
-  })(function (err) {
+
+    return beyo;
+  })(function (err, beyo) {
     if (err) {
       beyo.logger.log('error', err.stack || err);
       process.exit(-1);
     } else {
+      if (!beyo.config || !beyo.config.server || !beyo.config.server.port || !beyo.config.server.host) {
+        beyo.logger.log('error', 'Missing server configuration', beyo.config.server);
+        process.exit(-2);
+      }
+
       // listen
-      beyo.app.listen(args['port'], args['host']);
-      beyo.logger.log('info', 'Listening on %s:%s', args['interface'], args['port']);
+      beyo.app.listen(beyo.config.server.port, beyo.config.server.host);
+      beyo.logger.log('info', 'Listening on %s:%s', beyo.config.server.host, beyo.config.server.port);
     }
   });
 }
