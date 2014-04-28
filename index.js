@@ -17,7 +17,6 @@ var appRoot = module.exports.appRoot = process.cwd();
 var events = module.exports.events = new (require('events').EventEmitter);
 
 
-
 module.exports.init = init;
 module.exports.initApplication = initApplication;
 module.exports.createSubApp = createSubApp;
@@ -31,22 +30,49 @@ Init Beyo
 function * init(appRequire) {
   events.emit('beforeInitialize', beyo);
 
-  Object.defineProperty(module.exports, 'app', {
+  Object.defineProperties(beyo, {
+    env: {
+      configurable: false,
+      enumerable: true,
+      writable: false,
+      value: env
+    },
+    app: {
+      configurable: false,
+      enumerable: true,
+      writable: false,
+      value: _createApp()
+    },
+    appRequire: {
+      configurable: false,
+      enumerable: true,
+      writable: false,
+      value: appRequire
+    }
+  });
+
+  Object.defineProperty(beyo, 'config', {
     configurable: false,
     enumerable: true,
     writable: false,
-    value: _createApp()
+    value: yield configLoader(pathJoin(appRoot, 'app', 'conf'), beyo)
   });
 
-  beyo.appRequire = appRequire;
-  beyo.env = env;
-
-  beyo.config = yield configLoader(pathJoin(appRoot, 'app', 'conf'), beyo);
+  Object.defineProperty(beyo, 'logger', {
+    configurable: false,
+    enumerable: true,
+    writable: false,
+    value: yield loggerLoader(beyo)
+  });
 
   yield loadApplicationPackageInformation(beyo);
 
-  beyo.logger = yield loggerLoader(beyo);
-  beyo.plugins = yield pluginsLoader(beyo, beyo.config.plugins);
+  Object.defineProperty(beyo, 'plugins', {
+    configurable: false,
+    enumerable: true,
+    writable: false,
+    value: yield pluginsLoader(beyo, beyo.config.plugins)
+  });
 
   events.emit('afterInitialize', beyo);
 }
@@ -112,14 +138,12 @@ function _createApp(mountPath, baseApp) {
 
 
 /**
-A default logger. May be overridden
+A default temporary logger. May be overridden
 */
-beyo.logger = {
-  log: function defaultLogger(level) {
-    var args = Array.prototype.slice.call(arguments, 1);
+['log', 'info', 'warn', 'error'].forEach(function (method) {
+  (beyo.logger = beyo.logger || {})[method] = function defaultLogger(level) {
+    arguments[0] = level + ':';
 
-    args[0] = level + ': ' + args[0];
-
-    console.log.apply(console, args);
-  }
-};
+    console[method].apply(console, arguments);
+  };
+});

@@ -4,7 +4,6 @@
  * Module dependencies.
  */
 
-
 var fs = require('fs');
 var path = require('path');
 var program = require('commander');
@@ -19,15 +18,10 @@ process.argv[1] = process.argv[1].replace('_beyo.js', 'beyo.js');
 
 // options
 
+// if no options given, assume "help" is implied
 if (process.argv.length <= 2) {
   process.argv.push('-h');
 }
-
-//program
-  //.option('-b, --backlog <size>', 'specify the backlog size [511]', '511')
-  //.option('-r, --ratelimit <n>', 'ratelimit requests [2500]', '2500')
-  //.option('-d, --ratelimit-duration <ms>', 'ratelimit duration [1h]', '1h')
-//;
 
 commandPaths.forEach(function (commandPath) {
   if (fs.existsSync(commandPath)) {
