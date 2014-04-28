@@ -27,10 +27,9 @@ function _initAction(args) {
             "Type `beyo init` to create a new application.\n";
     }
 
-    return beyo;
-  })(function (err, beyo) {
+  })(function (err) {
     if (err) {
-      beyo.logger.log('error', err.stack || err);
+      (beyo && beyo.logger || console).log('error', err.stack || err);
       process.exit(-1);
     } else {
       if (!beyo.config || !beyo.config.server || !beyo.config.server.port || !beyo.config.server.host) {
