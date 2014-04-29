@@ -33,7 +33,7 @@ function _initAction(args) {
       process.exit(-1);
     } else {
       if (!beyo.config || !beyo.config.server || !beyo.config.server.port || !beyo.config.server.host) {
-        beyo.logger.log('error', 'Missing server configuration', beyo.config.server);
+        beyo.logger.log('error', 'Missing server configuration');
         process.exit(-2);
       }
 

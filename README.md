@@ -23,6 +23,9 @@ framework and all contributions welcome!
 
 ## Create a New Application
 
+**NOTE**: there may be minor issues with these steps as the API changed slightly and the
+default project stub is not in sync with these changes.
+
 1. Install Beyo globally : `npm install -g beyo`
 1. Install [Bower](http://bower.io/) : `npm install -g bower`
 3. Create your project base directory : `mkdir project`, then `cd project`
@@ -69,9 +72,90 @@ A typical Beyo application project have this structure.
   +- nodemon.json
 ```
 
+**NOTE**: this structure is incomplete and/or may include folders that another
+application may not need.
+
+
 ## Configurations
 
+Configuration files are read inside `config` directories of the application (see the
+proposed project structure), and may be placed inside subdirectories for maintainability.
+Each subdirectory will act as a configuration key. For example, the configuration structre
+
+```
+// ./conf/server.json
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 4044
+  }
+}
+```
+
+```
+// ./conf/foo/bar/buz.json
+{
+  "buzz": {
+    "value": "Hello!"
+  }
+}
+```
+
+will generate the configuration object
+
+```
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 4044
+  },
+  "foo": {
+    "bar": {
+      "buz": {
+        "value": "Hello!"
+      }
+    }
+  }
+}
+```
+
+Configuration files may be of type `.json` or `.js`.
+
+
+### Environment Dependent Config
+
+Any configuration files may be applied to a specific environment setting. For example,
+if the server host and port needs to be different between `development`, `staging` and
+`production`. To apply a configuration file to a specific environment, append the env
+suffix to the file name. If a suffix is defined, the file will be loaded if it matches
+the beginning of the environment value. For example, for `development`, these files
+will all be loaded :
+
+* server.json
+* server.d.json
+* server.de.json
+* server.dev.json
+* ...
+* server.development.json
+
+Also, more than one environment may be specified, each separated by a dot. For exemple
+configuration files for `development` and `staging` :
+
+* server.json
+* server.d.s.json
+* ...
+* server.dev.stag.json
+* ...
+* server.development.staging.json
+
+
+**Note**: suffixes are inclusive only, they cannot specify "all environments but ..."; they
+specify "any environment, or ..."
+
+
 ### Global Application Configuration
+
+All loaded configuration files are available via `beyo.config`.
 
 * **logger** *(Object)* : the logger configuration. This logger may be accessed via
 `beyo.logger` and is an instance of [Winston](https://github.com/flatiron/winston). A
@@ -118,7 +202,7 @@ typical config would be, for example :
 * **modulePaths** *(Array)* : This configuration is mandatory and contains a list of
 paths to load MVC modules. It may have an interest for multi-domain projects, where each
 domain would have their own `app/modules` structure. Each path are relative to the project's
-root directory. *(Mandatory, typically `['app/modules']`)*
+root directory. *(Mandatory, typically `['./app/modules']`)*
 
 * **plugins** *{Object}* : Specify which plugins will be loaded and available globally.
 Please refer to the [Plugins](#Plugins) section for more information.
@@ -127,17 +211,28 @@ Please refer to the [Plugins](#Plugins) section for more information.
 the server should bind and listen incoming clients from. For example :
   ```
   {
-    "server": {
-      "host": "0.0.0.0",
-      "port": 4044
-    }
+    "host": "0.0.0.0",
+    "port": 4044
   }
   ```
+
+* **staticPaths** *{Array}* : Specify an array of path that will be served as static
+content from the root application.
 
 
 ### Module Specific Configuration
 
-*TODO*
+Each module may define their own personal configuration, which will be aavilable through
+the controller's `moduleData`, or `beyo.modules.<module>.config`.
+
+* **staticPaths** *{Array}* : Specify an array of path that will be served as static
+content from the module's application (or root application if the module does not create
+a sub-application).
+
+* **plugins** *{Object}* : Specify which plugins will be loaded and available from the
+module. Be aware that plugins will not know if they are being loaded globally or from a module's
+configuration. Please refer to the [Plugins](#Plugins) section for more information.
+
 
 
 ## Plugins
@@ -200,50 +295,78 @@ will invoke the `node-module-foo` module with it's `options == { text: "Hello" }
 
 ## Application Modules
 
-*TODO*
+A module is a piece of the application. It encapsulate an application feature and is
+composed of configuration, controllers, models, views, services, etc. that are specific
+to the feature they encapsulate. Modules should be independant from each other and
+should not be aware of other modules; they are essentially applications inside an
+application.
+
+*NEEDS MORE INFORMATION*
 
 
 ### Controllers
 
-*TODO*
+A controller is where routes and middlewares are register to the module's koa instance.
+Controllers should be small and concise and should not execute long processes; they
+should return as fast as possible. It is recommended to use `Services` for long processes.
+
+*NEEDS MORE INFORMATION*
 
 
 ### Models
 
-*TODO*
+Models are also called the "Business Model" and represent the data structure of the
+application. They are usually backed by a persistence layer (ex: a database) to be
+accessible across processes, clusters and restarts.
 
+Beyo does not enforce a persistence layer on models, neither does it enforce any given
+convention, other than a way to load them automatically in an orderly manner.
 
-#### Mappers
-
-*TODO*
+*NEEDS MORE INFORMATION*
 
 
 ### Views
 
-*TODO*
+A view is what is sent to the client (browser) once a controller has completed processing
+a request. Views can be HTML, JSON, plain text, etc. and are mainly the feedback that
+the user can receive from the application.
+
+Beyo does not enforce any rendering engine or format. Views are documented only as they
+are part of the framework acrhitecture (i.e. HMVC).
+
+*NEEDS MORE INFORMATION*
 
 
 ## Events
 
 Almost all aspect of the application can be monitored and managed through events.
 
-* **beforeInitialize** *(beyo)* : fired when calling `beyo.init()`
-* **afterInitialize** *(beyo)* : fired when calling `beyo.init()`
-* **appCreated** *(object)* : fired when a koa application is created. The event
+* **beforeInitialize** *(Beyo)* : emitted when calling `beyo.init()`. The event listeners
+will receive the `Beyo` object instance.
+* **afterInitialize** *(Beyo)* : emitted when calling `beyo.init()`. The event listeners
+will receive the `Beyo` object instance.
+* **appCreated** *(Object)* : emitted when a koa application is created. The event
 listeners receive the `app` instance, the mounted `path`, and if this `isRoot`
 application.
-* **configLoaded** *(object)* : fired when a configuration object has loaded. The
+* **configLoaded** *(Object)* : emitted when a configuration object has loaded. The
 event listeners receive the configuration `path`, the `files` found, and the
 `config` object constructed from the them.
-* **loggerLoaded** *(winston)* : fired when the logger has been loaded. The event
-listeners receive the [winston](https://github.com/flatiron/winston) instance.
-* **pluginLoaded** *(object)* : fired when a plugin is loaded. The event listeners
+* **loggerLoaded** *(Winston)* : emitted when the logger has been loaded. The event
+listeners receive the [Winston](https://github.com/flatiron/winston) instance.
+* **pluginLoaded** *(Object)* : emitted when a plugin is loaded. The event listeners
 receive the plugin's `path`, the actual `plugin` function and it's result (`pluginValue`).
-* **beforeModuleLoad** *(object)* : fired when a module is being loaded. The event
+* **pluginsLoadComplete** *{Object}* : emitted when all plugins have been loaded. This event will
+be emitted once for the global plugins, then again as many times as there are modules
+that have declared plugins in their configuration. The event listeners will receive an
+object matching each plugin and their returned values.
+* **beforeModuleLoad** *(Object)* : emitted when a module is being loaded. The event
 listeners receive the module `path` and it's `data` object.
-* **afterModuleLoad** *(object)* : fired when a module is being loaded. The event
+* **afterModuleLoad** *(Object)* : emitted when a module is being loaded. The event
 listeners receive the module `path`, it's `data` object, and the module's
 `app` instance.
+* **modulesLoadComplete** *{Object}* : emitted when all modules are done loading. The
+event listeners will receive the modules object mapping (i.e. same as `beyo.modules`, before
+it is set).
 
 
 ## Contribution
