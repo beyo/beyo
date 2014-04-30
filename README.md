@@ -375,14 +375,14 @@ it's `data` object, and the module's `app` instance.
 * **subAppCreated** *{Object}* : emitted when a module creates a sub-applications, mounted to
 the main, global, application instance. Event listeners will receive the `app` instance and
 the `mounthPath` value.
-* **controllerLoaded** *{Object}* : emitted when a controller was successfully loaded. The
-event listeners will receive the controller's `path`, the file's base `name` (controller name),
-the module's `app` instance, the module's `data` object, and the controller's returned value
-(may be undefined).
 * **modelLoaded** *{Object}* : emitted when a model was successfully loaded. The event
 listeners will receive the model's `path`, the file's base `name` (controller name), the
 module's `app` instance, the module's `data` object, and the controller's returned value (may
 be undefined).
+* **controllerLoaded** *{Object}* : emitted when a controller was successfully loaded. The
+event listeners will receive the controller's `path`, the file's base `name` (controller name),
+the module's `app` instance, the module's `data` object, and the controller's returned value
+(may be undefined).
 * **afterModuleLoad** *(Object)* : emitted when a module is being loaded. The event
 listeners receive the module `path`, it's `data` object, and the module's
 `app` instance.
