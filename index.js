@@ -2,8 +2,6 @@
 var fs = require('co-fs');
 var pathJoin = require('path').join;
 var glob = require('co-glob');
-var koa = require('koa');
-var mount = require('koa-mount');
 
 var appLoader = require('./lib/loaders/app');
 var configLoader = require('./lib/loaders/config');
@@ -19,7 +17,6 @@ var events = module.exports.events = new (require('events').EventEmitter);
 
 module.exports.init = init;
 module.exports.initApplication = initApplication;
-module.exports.createSubApp = createSubApp;
 
 
 /**
@@ -36,12 +33,6 @@ function * init(appRequire) {
       enumerable: true,
       writable: false,
       value: env
-    },
-    app: {
-      configurable: false,
-      enumerable: true,
-      writable: false,
-      value: _createApp()
     },
     appRequire: {
       configurable: false,
@@ -99,41 +90,6 @@ function * loadApplicationPackageInformation(beyo) {
       license: pkg.license
     };
   }
-}
-
-/**
-Create a new koa instance, mount it at path and return it
-*/
-function createSubApp(path, baseApp) {
-  return _createApp(path, baseApp);
-}
-
-
-function _createApp(mountPath, baseApp) {
-  var app = koa();
-  var isRoot = !mountPath;
-
-  if (isRoot) {
-    mountPath = undefined;
-  } else {
-    if (typeof mountPath !== 'string') {
-      throw new Error('Mount path must be a string : ' + String(mountPath));
-    }
-  }
-
-  events.emit('appCreated', {
-    app: app,
-    path: mountPath,
-    isRoot: isRoot
-  });
-
-  if (mountPath) {
-    baseApp = baseApp || beyo.app;
-
-    baseApp.use(mount(mountPath, app));
-  }
-
-  return app;
 }
 
 

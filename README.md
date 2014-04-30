@@ -21,10 +21,17 @@ framework and all contributions welcome!
 * Plugin system
 
 
+## TODO
+
+* Implement tests
+
+
 ## Create a New Application
 
-**NOTE**: there may be minor issues with these steps as the API changed slightly and the
-default project stub is not in sync with these changes.
+**NOTE**: the requirements to these steps are outdated and, while it might work,
+the application stub is outdated and will not start. However, the steps still
+illustrates the general idea and this notice will be removed once everything is
+sync'ed.
 
 1. Install Beyo globally : `npm install -g beyo`
 1. Install [Bower](http://bower.io/) : `npm install -g bower`
@@ -339,15 +346,16 @@ are part of the framework acrhitecture (i.e. HMVC).
 
 ## Events
 
-Almost all aspect of the application can be monitored and managed through events.
+Almost all aspect of the application can be monitored and managed through events. The
+following events are more or less in their corresponding order. Certain events may be
+emitted differently due to the asynchronous nature of the framework (and JavaScript).
 
 * **beforeInitialize** *(Beyo)* : emitted when calling `beyo.init()`. The event listeners
 will receive the `Beyo` object instance.
 * **afterInitialize** *(Beyo)* : emitted when calling `beyo.init()`. The event listeners
 will receive the `Beyo` object instance.
-* **appCreated** *(Object)* : emitted when a koa application is created. The event
-listeners receive the `app` instance, the mounted `path`, and if this `isRoot`
-application.
+* **appCreated** *(Object)* : emitted when the global koa application is created. The event
+listeners receive the `app` instance.
 * **configLoaded** *(Object)* : emitted when a configuration object has loaded. The
 event listeners receive the configuration `path`, the `files` found, and the
 `config` object constructed from the them.
@@ -361,6 +369,20 @@ that have declared plugins in their configuration. The event listeners will rece
 object matching each plugin and their returned values.
 * **beforeModuleLoad** *(Object)* : emitted when a module is being loaded. The event
 listeners receive the module `path` and it's `data` object.
+* **moduleInitialized** *{Object}* : emitted when the module loader (if one found) has been
+called, and the module's application is known. The event listeners receive the module `path`,
+it's `data` object, and the module's `app` instance.
+* **subAppCreated** *{Object}* : emitted when a module creates a sub-applications, mounted to
+the main, global, application instance. Event listeners will receive the `app` instance and
+the `mounthPath` value.
+* **controllerLoaded** *{Object}* : emitted when a controller was successfully loaded. The
+event listeners will receive the controller's `path`, the file's base `name` (controller name),
+the module's `app` instance, the module's `data` object, and the controller's returned value
+(may be undefined).
+* **modelLoaded** *{Object}* : emitted when a model was successfully loaded. The event
+listeners will receive the model's `path`, the file's base `name` (controller name), the
+module's `app` instance, the module's `data` object, and the controller's returned value (may
+be undefined).
 * **afterModuleLoad** *(Object)* : emitted when a module is being loaded. The event
 listeners receive the module `path`, it's `data` object, and the module's
 `app` instance.
