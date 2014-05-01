@@ -96,10 +96,18 @@ function * loadApplicationPackageInformation(beyo) {
 /**
 A default temporary logger. May be overridden
 */
-['log', 'info', 'warn', 'error'].forEach(function (method) {
-  (beyo.logger = beyo.logger || {})[method] = function defaultLogger(level) {
+beyo.logger = {
+  log: function(level) {
     arguments[0] = level + ':';
+    console.log.apply(console, arguments);
+  }
+};
 
-    console[method].apply(console, arguments);
+['info', 'warn', 'error'].forEach(function (method) {
+  beyo.logger[method] = function defaultLogger() {
+    var args = Array.prototype.slice.call(arguments);
+    args.unshift(method + ':');
+
+    console[method].apply(console, args);
   };
 });
