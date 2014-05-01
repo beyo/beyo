@@ -98,16 +98,20 @@ A default temporary logger. May be overridden
 */
 beyo.logger = {
   log: function(level) {
-    arguments[0] = level + ':';
-    console.log.apply(console, arguments);
+    if (env !== 'production') {
+      arguments[0] = level + ':';
+      console.log.apply(console, arguments);
+    }
   }
 };
 
 ['info', 'warn', 'error'].forEach(function (method) {
   beyo.logger[method] = function defaultLogger() {
-    var args = Array.prototype.slice.call(arguments);
-    args.unshift(method + ':');
+    if (env !== 'production') {
+      var args = Array.prototype.slice.call(arguments);
+      args.unshift(method + ':');
 
-    console[method].apply(console, args);
+      console[method].apply(console, args);
+    }
   };
 });
