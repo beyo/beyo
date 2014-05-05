@@ -7,6 +7,7 @@
 var fs = require('fs');
 var path = require('path');
 var program = require('commander');
+var actioNWrapper = require('../lib/commands');
 var commandPaths = [
   path.join(__dirname, 'commands'),
   path.join(process.cwd(), 'bin', 'commands')
@@ -29,7 +30,7 @@ commandPaths.forEach(function (commandPath) {
       return a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase());
     }).forEach(function (file) {
       if (/\.js$/.test(file)) {
-        require(path.join(commandPath, file))(program.command(file.replace(/\.js$/, '')));
+        require(path.join(commandPath, file))(program.command(file.replace(/\.js$/, '')), actioNWrapper);
       }
     });
   }
