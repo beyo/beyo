@@ -11,8 +11,9 @@ var modulesLoader = require('./lib/loaders/modules');
 
 var env = process.env.NODE_ENV || 'development';
 var beyo = module.exports;
-var appRoot = module.exports.appRoot = process.cwd();
-var events = module.exports.events = new (require('events').EventEmitter);
+
+var appRoot = beyo.appRoot = process.cwd();
+var events = beyo.events = new (require('events').EventEmitter);
 
 
 module.exports.init = init;
