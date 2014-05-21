@@ -15,11 +15,19 @@ var mod_nodemon = false;
 
 
 process.argv.slice(2).forEach(function (arg){
-  var flag = arg.split('=')[0];
+  var p = arg.split('=');
 
-  switch (flag) {
+  switch (p[0]) {
     case '--nodemon':
       mod_nodemon = true;
+      break;
+
+    case '--appPath':
+      if (!p[1]) {
+        throw new Error("Missing path");
+      }
+      console.log(p[1], typeof p[1]);
+      process.chdir(relative(process.cwd(), p[1]));
       break;
 
     default:

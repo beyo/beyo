@@ -13,10 +13,8 @@ module.exports = function init(command) {
 function _initAction(args) {
   var beyo = require('../..');
 
-  process.on('SIGINT', function() {
-    beyo.logger.log('info', 'Interruption signal received, shutting down now');
-    process.exit(0);
-  });
+  process.on('SIGTERM', terminate);
+  process.on('SIGINT', terminate);
 
   // init app
   co(function * () {
@@ -42,4 +40,10 @@ function _initAction(args) {
       beyo.logger.log('info', 'Listening on %s:%s', beyo.config.server.host, beyo.config.server.port);
     }
   });
+}
+
+
+function terminate(code, signal) {
+  beyo.logger.log('info', 'Interruption signal received, shutting down now');
+  process.exit(code || 0);
 }
