@@ -13,8 +13,8 @@ module.exports = function init(command) {
 function _initAction(args) {
   var beyo = require('../..');
 
-  process.on('SIGTERM', terminate);
-  process.on('SIGINT', terminate);
+  process.on('SIGTERM', terminate(beyo));
+  process.on('SIGINT', terminate(beyo));
 
   // init app
   co(function * () {
@@ -42,8 +42,9 @@ function _initAction(args) {
   });
 }
 
-
-function terminate(code, signal) {
-  beyo.logger.log('info', 'Interruption signal received, shutting down now');
-  process.exit(code || 0);
+function terminate(beyo) {
+  return function _terminate(code, signal) {
+    beyo.logger.log('info', 'Interruption signal received, shutting down now');
+    process.exit(code || 0);
+  };
 }
