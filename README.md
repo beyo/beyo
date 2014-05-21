@@ -391,6 +391,22 @@ event listeners will receive the modules object mapping (i.e. same as `beyo.modu
 it is set).
 
 
+## Starting the Application
+
+Beyo make use of two executables to launch the application. Because it requires to have
+node's `--harmony` features, the first executable ensures that this flag is set and
+initializing all features. The downside to this is that some arguments are only
+available in the first executable, and not listed as it is the second executable that
+actually display the available commands and help. These "hidden" arguments are :
+
+* **--nodemon** : initialize `nodemon` module, using any `nodemon.json` file available
+at the root of the application.
+* **--appPath=PATH** : used to start the application anywhere, set the application's
+root path. This will change node's current working directory to `PATH`.
+
+To see any other help, just invoke `beyo -h` or `beyo --help`.
+
+
 ## Contribution
 
 All contributions welcome! Every PR **must** be accompanied by their associated
