@@ -232,14 +232,7 @@ content from the root application.
 Each module may define their own personal configuration, which will be aavilable through
 the controller's `moduleData`, or `beyo.modules.<module>.config`.
 
-* **staticPaths** *{Array}* : Specify an array of path that will be served as static
-content from the module's application (or root application if the module does not create
-a sub-application).
-
-* **plugins** *{Object}* : Specify which plugins will be loaded and available from the
-module. Be aware that plugins will not know if they are being loaded globally or from a module's
-configuration. Please refer to the [Plugins](#Plugins) section for more information.
-
+See [module configuration documentation](docs/module-config.md) for more information.
 
 
 ## Plugins
