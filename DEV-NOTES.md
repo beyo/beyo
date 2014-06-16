@@ -26,3 +26,39 @@ calling this function any other way is pointless.
 #### Unit tests
 
 To test this feature, there can be a `/index.js` fixture file loaded by the framework.
+
+
+### Refactor `lib/loaders/app.js` and remove `beyo.app.public` and `beyo.app.secured` dependencies (Must)
+
+#### Rationale
+
+Not all applications will require this setup and... it's ugly. Applications should be allowed to create
+any sub applications as required, and binding static routes to them should be streamlined and generalized.
+Also, adding sub-applications to `beyo.app` (i.e. `beyo.app.public`) is *not* a good idea and there should,
+perhaps, have an application registry; calling `beyo.createSubApp()` should perhaps accept a "name" argument
+to register the application for static routes. This will allow modules to register their own static content
+unto their own declared app. Something like :
+
+```javascript
+var pub = beyo.createSubApp('public');
+
+pub === beyo.getSubApp('public');  // -> true
+```
+
+Thus, static paths may use this to register middlewares to.
+
+```json
+{
+  "staticPaths": {
+    "public": "./pub"
+  }
+}
+```
+
+An application name should be arbitrary, however should follow the dot-nation, like for `error-factory`
+exception names.
+
+#### Unit tests
+
+This is quite easy to test, actually; create a sub-application and check that it was properly, and
+immediately added to `beyo.app`.

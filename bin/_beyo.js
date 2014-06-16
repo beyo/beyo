@@ -18,6 +18,11 @@ var commandPaths = [
 process.argv[1] = process.argv[1].replace('_beyo.js', 'beyo.js');
 
 // options
+program.version((function () {
+  var pkg = require(path.join(__dirname, '..', 'package'));
+
+  return pkg.name + ' v' + pkg.version;
+})());
 
 // if no options given, assume "help" is implied
 if (process.argv.length <= 2) {
