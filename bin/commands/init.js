@@ -5,7 +5,6 @@ const MODULE_NAME_REGEXP = /^[a-z]+[a-zA-Z0-9]*$/;
 var crypto = require('crypto');
 var co = require('co');
 var basename = require('path').basename;
-var logger = require('../../').logger;
 var installer = require('../../lib/util/installer');
 
 var appStruct;
@@ -39,6 +38,7 @@ function _initAction(args) {
     'app_name': validateApplicationName(args.appName),
     'module_name': validateModuleName(args.moduleName)
   };
+  var logger = require('../../').logger;
 
   if (!args.fixtureRepository) {
     throw 'No fixture repository specified!';

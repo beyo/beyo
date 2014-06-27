@@ -11,13 +11,25 @@ module.exports = function init(command) {
 };
 
 function _initAction(args) {
-  var beyo = require('../..');
-
-  process.on('SIGTERM', terminate(beyo));
-  process.on('SIGINT', terminate(beyo));
+  var beyo;
 
   // init app
   co(function * () {
+    var beyoConf;
+
+    if (yield fs.exists(pathJoin(process.cwd(), 'beyo.json'))) {
+      beyoConf = require(pathJoin(process.cwd(), 'beyo.json'));
+
+      if (beyoConf['env']) {
+        process.env.NODE_ENV = beyoConf['env'];
+      }
+    }
+
+    beyo = require('../..');
+
+    process.on('SIGTERM', terminate(beyo));
+    process.on('SIGINT', terminate(beyo));
+
     if (yield fs.exists(pathJoin(beyo.appRoot, 'index.js'))) {
       yield require(beyo.appRoot)(beyo);
     } else {
