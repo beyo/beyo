@@ -14,20 +14,6 @@ These are development notes for new features and refactoring.
 ## Roadmap
 
 
-### Remove `beyo.init` (Must)
-
-#### Rationale
-
-The rationale to this is that the `beyo` object should not expose one-time functions. This
-function should be available only from the application's `/index.js` file's context, as
-`this.init(require);`. Since there is no need to initialize an application any other way,
-calling this function any other way is pointless.
-
-#### Unit tests
-
-To test this feature, there can be a `/index.js` fixture file loaded by the framework.
-
-
 ### Refactor `lib/loaders/app.js` and remove `beyo.app.public` and `beyo.app.secured` dependencies (Must)
 
 #### Rationale
@@ -58,7 +44,28 @@ Thus, static paths may use this to register middlewares to.
 An application name should be arbitrary, however should follow the dot-nation, like for `error-factory`
 exception names.
 
+Using `beyo.app` to register static routes (or other config) could be done using a "default" key, such as :
+
+```json
+{
+  "staticPaths": {
+    "*": "./pub"
+  }
+}
+```
+
+
 #### Unit tests
 
 This is quite easy to test, actually; create a sub-application and check that it was properly, and
 immediately added to `beyo.app`.
+
+
+### Start server only when everything has been initialized
+
+#### Rationale
+
+Some node modules, like `beyo-model-mapper` need to run some evolutions on the models. This can
+be problematic as the evolutions would require to run async. There should be a way to queue task
+during app initialization and wait until all tasks have completed. To avoid init freeze or other
+weird stuff, a (configurable) timeout should also be implemented.

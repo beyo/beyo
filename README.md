@@ -343,10 +343,10 @@ Almost all aspect of the application can be monitored and managed through events
 following events are more or less in their corresponding order. Certain events may be
 emitted differently due to the asynchronous nature of the framework (and JavaScript).
 
-* **beforeInitialize** *(Beyo)* : emitted when calling `beyo.init()`. The event listeners
-will receive the `Beyo` object instance.
-* **afterInitialize** *(Beyo)* : emitted when calling `beyo.init()`. The event listeners
-will receive the `Beyo` object instance.
+* **beforeInitialize** *(Beyo)* : emitted when calling `this.init(require)` from the app
+root module (i.e. `./index.js`) . The event listeners will receive the `Beyo` object instance.
+* **afterInitialize** *(Beyo)* : emitted when calling `this.init(require)` from the app root
+module (i.e. `./index.js`). The event listeners will receive the `Beyo` object instance.
 * **appCreated** *(Object)* : emitted when the global koa application is created. The event
 listeners receive the `app` instance.
 * **configLoaded** *(Object)* : emitted when a configuration object has loaded. The
@@ -382,6 +382,8 @@ listeners receive the module `path`, it's `data` object, and the module's
 * **modulesLoadComplete** *{Object}* : emitted when all modules are done loading. The
 event listeners will receive the modules object mapping (i.e. same as `beyo.modules`, before
 it is set).
+* **appReady** *{Object}* : emitted when the application is ready and all initialization pipeline
+has been processed.
 
 
 ## Starting the Application
@@ -398,6 +400,42 @@ at the root of the application.
 root path. This will change node's current working directory to `PATH`.
 
 To see any other help, just invoke `beyo -h` or `beyo --help`.
+
+
+## Application hooks
+
+The framework allows extensions to hook on any events during the initialization, and to
+register a `postInit` async callback (ex: a thunk) to synchronize any asynchronous
+initializing modules.
+
+For example, a module may asynchronously initialize independant resources which need to
+be ready before the applications is actually ready to process incoming HTTP requests.
+
+```javascript
+module.exports = function * funkyModule(beyo, options) {
+  beyo.postInit(function (done) {
+    (function waitForResources() {
+      if (checkIfResourcesReady()) {
+        done();
+      } else {
+        setImmediate(waitForResources);
+      }
+    })();
+  });
+
+  // do not wait for the resources to be ready just yet, and keep on loading everything.
+  // Let the `postInit` wait, then (or not if everything is ready at that point).
+  return yield createModuleObject(options);
+};
+
+function * createModuleObject(options) { ... }
+
+// return true | false
+function checkIfResourcesReady() { ...}
+```
+
+**Note**: `postInit` returns the number of psot init processes at that moment, including
+the callback just provided.
 
 
 ## Contribution

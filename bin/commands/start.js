@@ -31,7 +31,7 @@ function _initAction(args) {
     process.on('SIGINT', terminate(beyo));
 
     if (yield fs.exists(pathJoin(beyo.appRoot, 'index.js'))) {
-      yield require(beyo.appRoot)(beyo);
+      yield beyo.initApplication();
     } else {
       throw "Application not found! Did you forget to initialize it?\n" +
             "Type `beyo init` to create a new application.\n";
