@@ -21,7 +21,7 @@ process.argv[1] = process.argv[1].replace('_beyo.js', 'beyo.js');
 program.version((function () {
   var pkg = require(path.join(__dirname, '..', 'package'));
 
-  return pkg.name + ' v' + pkg.version;
+  return pkg.name + '@' + pkg.version;
 })());
 
 // if no options given, assume "help" is implied
