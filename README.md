@@ -28,20 +28,7 @@ framework and all contributions welcome!
 
 ## Create a New Application
 
-**NOTE**: the requirements to these steps are outdated and, while it might work,
-the application stub is outdated and will not start. However, the steps still
-illustrates the general idea and this notice will be removed once everything is
-sync'ed.
-
-1. Install Beyo globally : `npm install -g beyo`
-1. Install [Bower](http://bower.io/) : `npm install -g bower`
-3. Create your project base directory : `mkdir project`, then `cd project`
-4. Initialize your application : `beyo init`
-5. Run your application : `beyo start`
-6. Load the application in the browser at `http://localhost:4044/`
-7. <kbd>CTRL+C</kbd> to shut down
-
-That's it!
+* Major rewrite in progress
 
 
 ## Project structure
@@ -50,33 +37,38 @@ A typical Beyo application project have this structure.
 
 ```
 - ./project-root
-  +- /app
-  |  +- /conf
+  +- /app                    // application root
+  |  +- /conf                // global config (beyo.config)
   |  |  +- index.json
-  |  +- /layouts
-  |  +- /locales
-  |  +- /modules
-  |  |  +- /demo
-  |  |     +- /conf
-  |  |     +- /controllers
-  |  |     +- /locales
-  |  |     +- /models
-  |  |     +- /pub
-  |  |     +- /services
-  |  |     +- /views
-  |  |     +- index.js
-  |  +- index.js
+  |  +- /layouts             // when using a view engine, place layouts here
+  |  +- /locales             // global locales for a potential i18n module
+  |  +- /modules             // modules root
+  |  |  +- /my-module        // a module
+  |  |     +- /conf          // module's configuration
+  |  |     +- /controllers   // the module's controllers (see Module Loader)
+  |  |     +- /locales       // the module's locales 
+  |  |     +- /models        // models will be loaded (see Module Loader)
+  |  |     +- /pub           // typical module's public (static) directory
+  |  |     +- /services      // TODO : to be documented
+  |  |     +- /views         // when using a view engine, place views here
+  |  |     +- index.js       // module entry point (see Module Loader)
+  |  +- index.js             // optional : typically, should be called by the 
+  |                          // application entry point and initialize the 
+  |                          // application's dependences (koa)
   +- /bin
-  |  +- /commands
-  +- /lib
-  +- /plugins
-  +- /pub
+  |  +- /commands            // place any commands (i.e. `beyo <command>`) here
+  +- /lib                    // place any third party or (general) application specific modules
+  +- /node_modules           // npm's module directory
+  +- /plugins                // see Plugins Loader
+  +- /pub                    // global public (static) directory
   |  +- /css
   |  +- /js
   |  +- /img
-  +- /test
-  +- index.js
-  +- nodemon.json
+  +- /test                   // all unit tests here
+  +- beyo.json               // define environment
+  +- index.js                // application entry point
+  +- nodemon.json            // nodemon options
+  +- package.json            // optional : provide application name, version, etc. used for npm publishing
 ```
 
 **NOTE**: this structure is incomplete and/or may include folders that another
@@ -87,7 +79,7 @@ application may not need.
 
 Configuration files are read inside `config` directories of the application (see the
 proposed project structure), and may be placed inside subdirectories for maintainability.
-Each subdirectory will act as a configuration key. For example, the configuration structre
+Each subdirectory will act as a configuration key. For example, the configuration structure
 
 ```
 // ./conf/server.json
@@ -102,7 +94,7 @@ Each subdirectory will act as a configuration key. For example, the configuratio
 ```
 // ./conf/foo/bar/buz.json
 {
-  "buzz": {
+  "buz": {
     "value": "Hello!"
   }
 }
@@ -126,7 +118,7 @@ will generate the configuration object
 }
 ```
 
-Configuration files may be of type `.json` or `.js`.
+Configuration files may be of type `.json`, `.js`, or `.node`.
 
 
 ### Environment Dependent Config
