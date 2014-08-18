@@ -5,12 +5,12 @@ describe('Beyo Application Framework', function () {
   var testPath = process.cwd();;
 
   var co = require('co');
-  var beyo;
+  var Beyo;
 
   before(function () {
     process.chdir('test/fixtures/simple-app');
 
-    beyo = require('../../lib/beyo');
+    Beyo = require('../../lib/beyo');
   });
 
   after(function () {
@@ -23,8 +23,15 @@ describe('Beyo Application Framework', function () {
     var koa = require('koa');
 
     co(function * () {
-      var testBeyo = yield beyo.initApplication();
+      var testBeyo = new Beyo();
 
+      testBeyo.isInitializing.should.be.false;
+      testBeyo.isReady.should.be.false;
+
+      yield testBeyo.init();
+
+      testBeyo.isInitializing.should.be.false;
+      testBeyo.isReady.should.be.true;
       testBeyo.app.should.be.instanceof(koa);
 
       // if the fixture was called, then `init` was invoked, and we should have an appRequire function!

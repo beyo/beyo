@@ -11,5 +11,5 @@ module.exports = function * main(beyo) {
     done();
   });
 
-  yield this.init(require);
+  return require;
 }

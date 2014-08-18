@@ -11,20 +11,24 @@ var appStruct;
 var appDependencies;
 
 
-module.exports = function init(command) {
+module.exports = function init(command, actionWrapper) {
   command
     .description('Initialize a new project')
     .option('-n, --app-name <name>', 'the project name [' + basename(process.cwd()) + ']', basename(process.cwd()))
     .option('-m, --module-name <name>', 'the default module name [default]', 'default')
-    .option('-P, --create-package [optional]', 'create a package.json file', false)
-    .option('-I, --no-npm-install [optional]', 'do not run npm install', false)
-    .option('-X, --no-shell-exec [optional]', 'do not run shell commands in def. file', false)
+    .option('-P, --create-package', 'create a package.json file', false)
+    .option('-I, --no-npm-install', '(optional) do not run npm install', false)
+    .option('-X, --no-shell-exec', '(optional) do not run shell commands in def. file', false)
     .option('-r, --fixture-repository <git-repo>', 'use git fixture repo')
-    .action(_initAction)
+    .action(actionWrapper(null, null, _initAction))
   ;
 };
 
-function _initAction(args) {
+function * _initAction(beyo, args, options) {
+
+  //console.log(beyo, args, options);
+  //return;
+
   var context = {
     'hash_auth_key': hash(),
     'hash_secure_auth_key': hash(),
@@ -38,30 +42,22 @@ function _initAction(args) {
     'app_name': validateApplicationName(args.appName),
     'module_name': validateModuleName(args.moduleName)
   };
-  var logger = require('../../').logger;
 
   if (!args.fixtureRepository) {
-    throw 'No fixture repository specified!';
+    beyo.logger.log('error', 'No fixture repository specified!');
+    return;
   }
 
-  this.preventStart = true;
-
-  co(function * () {
-    yield (installer.install)({
-      basePath: process.cwd(),
-      definition: args.fixtureRepository,
-      context: context,
-      createPackage: args.createPackage,
-      npmInstall: args.npmInstall,
-      shellExec: args.shellExec
-    });
-  })(function (err) {
-    if (err) {
-      logger.log('error', err);
-    } else {
-      logger.log('debug', 'Initialization complete!');
-    }
+  yield (installer.install)({
+    basePath: process.cwd(),
+    definition: args.fixtureRepository,
+    context: context,
+    createPackage: args.createPackage,
+    npmInstall: args.npmInstall,
+    shellExec: args.shellExec
   });
+
+  beyo.logger.log('debug', 'Initialization complete!');
 }
 
 function hash() {
