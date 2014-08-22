@@ -13,7 +13,6 @@ var commandPaths = [
   path.join(process.cwd(), 'bin', 'commands')
 ];
 
-
 // hack : override the program's name
 process.argv[1] = process.argv[1].replace('_beyo.js', 'beyo.js');
 
@@ -28,6 +27,12 @@ program.version((function () {
 if (process.argv.length <= 2) {
   process.argv.push('-h');
 }
+
+program.on('*', function (args) {
+  console.error('Unknown argument :', args[0]);
+  console.error();
+  process.exit(1);
+});
 
 commandPaths.forEach(function (commandPath) {
   if (fs.existsSync(commandPath)) {
