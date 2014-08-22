@@ -16,7 +16,7 @@ module.exports = function init(command, actionWrapper) {
     .description('Initialize a new project')
     .option('-n, --app-name <name>', 'the project name [' + basename(process.cwd()) + ']', basename(process.cwd()))
     .option('-m, --module-name <name>', 'the default module name [default]', 'default')
-    .option('-p, --create-package', 'create a package.json file', false)
+    .option('-p, --create-package', '(optional) create a package.json file', false)
     .option('-I, --no-npm-install', '(optional) do not run npm install', false)
     .option('-X, --no-shell-exec', '(optional) do not run shell commands in fixture', false)
     .option('-f, --fixture <git-repo>', '(optional) use fixture from git repo', false)
@@ -39,9 +39,7 @@ function * _initAction(beyo, args, options) {
     'module_name': validateModuleName(options.moduleName)
   };
 
-  console.log(context);
-
-  beyo.logger.log('debug', 'Initialization complete!');
+  console.log('[*]', 'Initialization complete!');
 }
 
 function hash() {

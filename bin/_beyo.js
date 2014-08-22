@@ -17,11 +17,17 @@ var commandPaths = [
 process.argv[1] = process.argv[1].replace('_beyo.js', 'beyo.js');
 
 // options
-program.version((function () {
-  var pkg = require(path.join(__dirname, '..', 'package'));
+program
+  .version((function () {
+    var pkg = require(path.join(__dirname, '..', 'package'));
 
-  return pkg.name + '@' + pkg.version;
-})());
+    return pkg.name + '@' + pkg.version;
+  })())
+  .option('-v, --verbose', 'display a lot of initialization information', false)
+  .option('-s, --show-stack-trace', 'on error, show stack trace with message', false)
+  .option('-q, --quiet', 'do not display anything (ignores verbose)', false)
+  .option('-C, --no-color', 'disable color support', false)
+;
 
 // if no options given, assume "help" is implied
 if (process.argv.length <= 2) {

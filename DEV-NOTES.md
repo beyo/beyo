@@ -5,7 +5,7 @@ These are development notes for new features and refactoring.
 ## Priority levels
 
 1. **Critical** - should be done ASAP
-2. **Severe** - should be done ASAP, but current implement is stable enough
+2. **Severe** - should be done ASAP, current implementation is unstable
 3. **Must** - should be done because it increase the framework coherence
 4. **Nice to have** - features that should be implemented
 5. **Idea** - an idea that needs to be researched and tested further
@@ -13,59 +13,16 @@ These are development notes for new features and refactoring.
 
 ## Roadmap
 
+### Default Init Logging (must)
 
-### Refactor `lib/loaders/app.js` and remove `beyo.app.public` and `beyo.app.secured` dependencies (Must)
+Even though `beyo.logger` is used, the actual logger being used by default, until the global configurations are loaded, is  `console.log`. This is problematic as it is not coherent with the step when the logger has been properly configured.
 
-#### Rationale
+To resolve this, Beyo core should not use the configured logger, but strictly use `stdout` and `stderr`. These outputs can be redirected anyhow by the invoking program, so there is really no issue here. Optionally, the `start` command could provide some verbosity options to specify the level of information displayed when initializing.
 
-Not all applications will require this setup and... it's ugly. Applications should be allowed to create
-any sub applications as required, and binding static routes to them should be streamlined and generalized.
-Also, adding sub-applications to `beyo.app` (i.e. `beyo.app.public`) is *not* a good idea and there should,
-perhaps, have an application registry; calling `beyo.createSubApp()` should perhaps accept a "name" argument
-to register the application for static routes. This will allow modules to register their own static content
-unto their own declared app. Something like :
+The actual logger is intended to be used by the application and plugins surrounding Beyo core.
 
-```javascript
-var pub = beyo.createSubApp('public');
+#### Proposed command options
 
-pub === beyo.getSubApp('public');  // -> true
-```
-
-Thus, static paths may use this to register middlewares to.
-
-```json
-{
-  "staticPaths": {
-    "public": "./pub"
-  }
-}
-```
-
-An application name should be arbitrary, however should follow the dot-nation, like for `error-factory`
-exception names.
-
-Using `beyo.app` to register static routes (or other config) could be done using a "default" key, such as :
-
-```json
-{
-  "staticPaths": {
-    "*": "./pub"
-  }
-}
-```
-
-
-#### Unit tests
-
-This is quite easy to test, actually; create a sub-application and check that it was properly, and
-immediately added to `beyo.app`.
-
-
-### Start server only when everything has been initialized
-
-#### Rationale
-
-Some node modules, like `beyo-model-mapper` need to run some evolutions on the models. This can
-be problematic as the evolutions would require to run async. There should be a way to queue task
-during app initialization and wait until all tasks have completed. To avoid init freeze or other
-weird stuff, a (configurable) timeout should also be implemented.
+* **-v, --verbose** will display everything to `stdout`. Otherwise, just display basic information.
+* **-s, --show-stack-trace** will display stack trace to errors during the initialization process (i.e. loaders). Otherwise, just display error messages.
+* **-q, --quiet** do not display *anything*. This option overrides **-v** and **-s**.
