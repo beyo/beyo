@@ -33,13 +33,15 @@ program
   .option('-C, --no-color', 'disable color support', false)
 ;
 
-// if no options given, assume "help" is implied
-if (process.argv.length <= 2) {
+// if no command given, push '-h' to get some help!
+if (!process.argv.slice(2).filter(function (arg) {
+  return arg.charAt(0) !== '-';
+}).length) {
   process.argv.push('-h');
 }
 
 program.on('*', function (args) {
-  console.error('Unknown argument :', args[0]);
+  console.error('Unknown command :', args[0]);
   console.error();
   process.exit(1);
 });
