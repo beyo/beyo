@@ -2,6 +2,20 @@
 
 Beyo Application framework built on top of koa and other goodies.
 
+---
+
+## DEPRECATION NOTICE
+
+The version `0.x` of Beyo is a draft version, assembled for a single project and not really intended to be used just yet. Thus, you will find artefact of WTF code, or other gems, hidden deep in the bowel of the framework. 
+
+This project was started on January 2014 and, while it has proven to run quite well, it is now time to deprecate the `0.x` line in preparation for the `1.x` one that will be better structured and easy to use. The next version is currently in [development](https://github.com/beyo/beyo/tree/dev) and should be ready for a RC in October.
+
+For this reason, it is strongly suggested to prepare to refactor any ongoing project and wait, or help with the code. If you decide to help, be advised that I already have a clear idea of where I'm going with the refactor and a short meeting on IRC (or wherever) should be in order, first. There is much to do and I'm already maintaining a dozen projects, so be patient! (Oh, and I also have a family and personal life, too!)
+
+See you around!
+
+---
+
 
 ## Preamble
 
