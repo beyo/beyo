@@ -1,0 +1,9 @@
+{
+
+  "server": {
+    "port": 1337
+  },
+
+  "conflictKey": "original"
+
+}

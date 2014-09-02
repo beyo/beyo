@@ -19,7 +19,9 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "mocha --harmony"
+    "test": "mocha --harmony",
+    "test-cov": "node --harmony node_modules/istanbul-harmony/lib/cli.js cover node_modules/mocha/bin/_mocha",
+    "test-travis": "node --harmony node_modules/istanbul-harmony/lib/cli.js cover node_modules/mocha/bin/_mocha --report lcovonly"
   },
   "repository": {
     "type": "git",
@@ -52,8 +54,8 @@
     "winston": "~0.7.3"
   },
   "devDependencies": {
-    "mocha": "^1.21.4",
-    "semicov": "^0.1.1-2",
+    "co-mocha": "^1.0.0",
+    "istanbul-harmony": "^0.3.0",
     "should": "^4.0.4"
   }
 }

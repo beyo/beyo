@@ -11,5 +11,5 @@ module.exports = function * main(beyo) {
     done();
   });
 
-  return require;
+  return module;
 }

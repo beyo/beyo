@@ -1,3 +1,4 @@
+--require co-mocha
 --require should
 --require ./test/init
 --timeout 60000
