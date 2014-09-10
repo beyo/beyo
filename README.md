@@ -1,5 +1,8 @@
 # Beyo
 
+[![Build Status](https://travis-ci.org/beyo/beyo.svg)](https://travis-ci.org/beyo/beyo)
+[![Coverage Status](https://coveralls.io/repos/beyo/beyo/badge.png)](https://coveralls.io/r/beyo/beyo)
+
 Beyo Application framework built on top of koa and other goodies.
 
 
