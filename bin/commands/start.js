@@ -16,10 +16,6 @@ function * _startAction(beyo, args, options) {
 
   yield beyo.init();
 
-  beyo.once('serverStarted', function (port, host) {
-    beyo.logger.log('info', 'Listening on %s:%s', host || 'localhost', port);
-  });
-
   // listen
   beyo.start();
 
