@@ -51,6 +51,7 @@
     "nodemon": "~1.2.1",
     "npm": "^1.4.24",
     "tmp": "0.0.24",
+    "var-validator": "0.0.2",
     "winston": "~0.7.3"
   },
   "devDependencies": {
