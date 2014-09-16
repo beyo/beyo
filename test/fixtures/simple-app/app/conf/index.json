@@ -4,6 +4,11 @@
     "port": 1337
   },
 
-  "conflictKey": "original"
+  "conflictKey": "original",
+
+  "mergeKey": {
+    "foo": 123,
+    "override": "index"
+  }
 
 }

@@ -1,0 +1,8 @@
+{
+
+  "mergeKey": {
+    "bar": 456,
+    "override": "merged"
+  }
+
+}
