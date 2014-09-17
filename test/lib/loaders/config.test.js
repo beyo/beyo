@@ -7,7 +7,7 @@ describe('Test Config Loader', function () {
 
   this.timeout(1000);
 
-  it('should fail when path not specified', function * () {
+  it('should fail when no options specified', function * () {
     try {
       yield loader();
 
@@ -18,7 +18,94 @@ describe('Test Config Loader', function () {
       } else {
         e.should.be.an.Error
           .and.have.property('message')
+          .equal('No options specified');
+      }
+    }
+  });
+
+  it('should fail with invalid options value', function * () {
+    var invalidOptions = [
+      null, true, false, 0, 1, '', 'abc', [], /./, function () {}
+    ];
+    var beyo = new BeyoMock();
+
+    for (var i = 0, iLen = invalidOptions.length; i < iLen; ++i) {
+      try {
+        yield loader(beyo, invalidOptions[i]);
+
+        throw TestError(this.runnable().fullTitle());
+      } catch (e) {
+        if (e instanceof TestError) {
+          throw e;
+        } else {
+          e.should.be.an.Error
+            .and.have.property('message')
+            .equal('Invalid options value: ' + String(invalidOptions[i]));
+        }
+      }
+    }
+  });
+
+  it('should fail with no path specified', function * () {
+    var beyo = new BeyoMock();
+
+    try {
+      yield loader(beyo, {});
+
+      throw TestError(this.runnable().fullTitle());
+    } catch (e) {
+      if (e instanceof TestError) {
+        throw e;
+      } else {
+        e.should.be.an.Error
+          .and.have.property('message')
           .equal('Config path not specified');
+      }
+    }
+  });
+
+  it('should fail with invalid path value', function * () {
+    var invalidPaths = [
+      undefined, null, true, false, 0, 1, {}, [], /./, function () {}
+    ];
+    var beyo = new BeyoMock();
+
+    for (var i = 0, iLen = invalidPaths.length; i < iLen; ++i) {
+      try {
+        yield loader(beyo, { path: invalidPaths[i]});
+
+        throw TestError(this.runnable().fullTitle());
+      } catch (e) {
+        if (e instanceof TestError) {
+          throw e;
+        } else {
+          e.should.be.an.Error
+            .and.have.property('message')
+            .equal('Invalid path value: ' + String(invalidPaths[i]));
+        }
+      }
+    }
+  });
+
+  it('should fail with invalid module name value', function * () {
+    var invalidModuleNames = [
+      undefined, null, true, false, 0, 1, {}, [], /./, function () {}
+    ];
+    var beyo = new BeyoMock();
+
+    for (var i = 0, iLen = invalidModuleNames.length; i < iLen; ++i) {
+      try {
+        yield loader(beyo, { path: 'foo', moduleName: invalidModuleNames[i]});
+
+        throw TestError(this.runnable().fullTitle());
+      } catch (e) {
+        if (e instanceof TestError) {
+          throw e;
+        } else {
+          e.should.be.an.Error
+            .and.have.property('message')
+            .equal('Invalid module name: ' + String(invalidModuleNames[i]));
+        }
       }
     }
   });
@@ -101,11 +188,11 @@ describe('Test Config Loader', function () {
       config = yield loader(beyo, configOptions);
 
       config.should.have.ownProperty('mergeKey');
-      config.mergeKey.should.have.ownProperty('foo').and.equal(123);
-      config.mergeKey.should.have.ownProperty('bar').and.equal(456);
+      config.mergeKey.should.have.ownProperty('foo').equal(123);
+      config.mergeKey.should.have.ownProperty('bar').equal(456);
 
       // NOTE : configuration is loaded alphabetically, therefore, index.json comes before merge.json
-      config.mergeKey.should.have.ownProperty('override').and.equal('merged');
+      config.mergeKey.should.have.ownProperty('override').equal('merged');
     });
 
   });
@@ -149,6 +236,33 @@ describe('Test Config Loader', function () {
       config['env-dev'].dev.should.be.true;
       config['env-dev'].devel.should.be.true;
       config['env-dev'].development.should.be.true;
+    });
+
+    it('should load config providing multiple env', function * () {
+      // A
+      beyo.env = 'a';
+      config = yield loader(beyo, configOptions);
+
+      config.should.not.have.ownProperty('env-test');
+      config.should.not.have.ownProperty('env-dev');
+
+      config['env-ab'].a.should.be.true;
+      config['env-ab'].ab.should.be.true;
+      config['env-ab'].ba.should.be.true;
+      config['env-ab'].should.not.have.ownProperty('b');
+
+      // B
+      beyo.env = 'b';
+      config = yield loader(beyo, configOptions);
+
+      config.should.not.have.ownProperty('env-test');
+      config.should.not.have.ownProperty('env-dev');
+
+      config['env-ab'].b.should.be.true;
+      config['env-ab'].ab.should.be.true;
+      config['env-ab'].ba.should.be.true;
+      config['env-ab'].should.not.have.ownProperty('a');
+
     });
 
     it('should not load unspecified config (prod)', function * () {
