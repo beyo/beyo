@@ -1,0 +1,6 @@
+{
+  "name": "test",
+  "version": "0.0.1",
+  "description": "This module should be in conflict with the other test module",
+  "author": "Yanick Rochon <yanick.rochon@mind2soft.com>"
+}

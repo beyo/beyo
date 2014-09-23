@@ -170,7 +170,7 @@ describe('Test Controllers Loader', function () {
 
   it('should load controllers', function * () {
     var beyo = new BeyoMock();
-    var context = {};
+    var context = new ModuleContextMock();
     var options = {
       path: 'simple-app/app/modules/test/controllers',
       moduleName: 'test',
@@ -195,7 +195,7 @@ describe('Test Controllers Loader', function () {
   describe('Controller loader events', function () {
 
     var beyo = new BeyoMock();
-    var context = {};
+    var context = new ModuleContextMock();
     var options = {
       path: 'simple-app/app/modules/test/controllers',
       moduleName: 'test',

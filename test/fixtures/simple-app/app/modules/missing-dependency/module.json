@@ -1,0 +1,10 @@
+{
+  "name": "missing-dependency",
+  "version": "0.0.1",
+  "description": "Missing Dependency module (missing module error test)",
+  "author": "Yanick Rochon <yanick.rochon@mind2soft.com>",
+
+  "dependencies": [
+    "invalid-dependency-module-that-do-not-exist"
+  ]
+}

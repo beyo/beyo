@@ -170,7 +170,7 @@ describe('Test Models Loader', function () {
 
   it('should load models', function * () {
     var beyo = new BeyoMock();
-    var context = {};
+    var context = new ModuleContextMock();
     var options = {
       path: 'simple-app/app/modules/test/models',
       moduleName: 'test',
@@ -196,7 +196,7 @@ describe('Test Models Loader', function () {
   describe('Model loader events', function () {
 
     var beyo = new BeyoMock();
-    var context = {};
+    var context = new ModuleContextMock();
     var options = {
       path: 'simple-app/app/modules/test/models',
       moduleName: 'test',

@@ -1,0 +1,10 @@
+{
+  "name": "test-dependent",
+  "version": "0.0.1",
+  "description": "Test dependent module (test already loaded)",
+  "author": "Yanick Rochon <yanick.rochon@mind2soft.com>",
+
+  "dependencies": [
+    "test"
+  ]
+}

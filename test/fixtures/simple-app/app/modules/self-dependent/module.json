@@ -1,0 +1,10 @@
+{
+  "name": "dependency-test",
+  "version": "0.0.1",
+  "description": "Self dependent module (cyclical error test)",
+  "author": "Yanick Rochon <yanick.rochon@mind2soft.com>",
+
+  "dependencies": [
+    "dependency-test"
+  ]
+}
