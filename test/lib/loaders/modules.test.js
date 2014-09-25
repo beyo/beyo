@@ -97,24 +97,22 @@ describe('Test Modules Loader', function () {
     beyo.__modules.test.should.be.true;
   });
 
+  it('should cleanup error\'ed modules', function * () {
+    var beyo = new BeyoMock();
+    var configOptions = {
+      path: 'simple-app/app/modules'
+    };
+    var modules = yield loader(beyo, configOptions);
 
-  it('should emit conflict on duplicate module names');
+    modules.should.not.have.ownProperty('missing-dependency');
+    modules.should.not.have.ownProperty('dependency-test');
 
-
-  it('should emit error on missing module dependency');
-
-
-  it('should emit error on invalid module name');
-
-
-  it('should emit error on cyclical module dependencies');
-
-
-  it('should cleanup error\'ed modules');
+    modules.should.have.ownProperty('test');
+    modules.should.have.ownProperty('test-dependent');
+  });
 
 
   describe('Modules loader events', function () {
-
     var beyo = new BeyoMock();
     var configOptions = {
       path: 'simple-app/app/modules'
@@ -130,16 +128,12 @@ describe('Test Modules Loader', function () {
 
     it('should emit `moduleLoad`', function () {
       beyo.on('moduleLoad', function (evt) {
-        // TODO : fix this assertion
-        //evt.moduleName.should.equal(moduleName);
-
         eventsFired['moduleLoad'] = true;
       });
     });
     it('should emit `moduleLoadConflict`', function () {
-      beyo.on('moduleLoadConflict', function (key, src, dest, evt) {
-        //key.should.equal('conflictKey');
-        //evt.moduleName.should.equal(moduleName);
+      beyo.on('moduleLoadConflict', function (module, evt) {
+        module.should.be.an.Object;
 
         eventsFired['moduleLoadConflict'] = true;
       });
@@ -147,22 +141,170 @@ describe('Test Modules Loader', function () {
     it('should emit `moduleLoadError`', function () {
       beyo.on('moduleLoadError', function (err, evt) {
         err.should.be.an.Error;
-        //evt.moduleName.should.equal(moduleName);
 
         eventsFired['moduleLoadError'] = true;
       });
     });
     it('should emit `moduleLoadComplete`', function () {
       beyo.on('moduleLoadComplete', function (evt) {
-        //evt.moduleName.should.equal(moduleName);
-
         eventsFired['moduleLoadComplete'] = true;
       });
     });
 
   });
 
+  describe('Test errors in module.json', function () {
+
+    it('should emit error on require error', function * () {
+      var beyo = new BeyoMock();
+      var configOptions = {
+        path: 'simple-app/app/error-modules'
+      };
+      var errorDetected = false;
+
+      beyo.on('moduleLoadError', function (err, evt) {
+        err.should.be.an.Error;
+
+        if (err.message === 'Could not load moodule.json at: simple-app/app/error-modules/invalid-module-json') {
+          errorDetected = true;
+        }
+      });
+
+      yield loader(beyo, configOptions);
+
+      errorDetected.should.be.true;
+    });
+
+    it('should emit error on missing name', function * () {
+      var beyo = new BeyoMock();
+      var configOptions = {
+        path: 'simple-app/app/error-modules'
+      };
+      var errorDetected = false;
+
+      beyo.on('moduleLoadError', function (err, evt) {
+        err.should.be.an.Error;
+
+        if (err.message === 'No name defined for module at: simple-app/app/error-modules/missing-name') {
+          errorDetected = true;
+        }
+      });
+
+      yield loader(beyo, configOptions);
+
+      errorDetected.should.be.true;
+    });
+
+    it('should emit error on invalid name', function * () {
+      var invalidNames = [
+        undefined, null, false, true, void 0, 0, 1, /./, function () {}, '',
+        '0', '1', '123', '/'  // TODO more invalid strings?
+      ];
+      var testQueue = [];
+      var testCount = 0;
+
+      for (var i = 0, iLen = invalidNames.length; i < iLen; ++i) testQueue.push((function * (invalidName) {
+        var beyo = new BeyoMock(replaceName);
+        var configOptions = {
+          path: 'simple-app/app/error-modules'
+        };
+        var errorDetected = false;
+
+        function replaceName(mod) {
+          if (!('name' in mod)) {
+            mod.name = invalidName;
+          }
+        }
+
+        beyo.on('moduleLoadError', function (err, evt) {
+          err.should.be.an.Error;
+
+          if (err.message === 'Invalid module name at: simple-app/app/error-modules/missing-name') {
+            errorDetected = true;
+          }
+        });
+
+        yield loader(beyo, configOptions);
+
+        errorDetected.should.be.true;
+        testCount++;
+
+      })(invalidNames[i]));
+
+      yield testQueue;
+
+      testCount.should.equal(invalidNames.length);
+    });
+
+    it('should emit conflict on duplicate module names', function * () {
+      var beyo = new BeyoMock();
+      var configOptions = {
+        path: 'simple-app/app/modules'
+      };
+      var conflictDetected = false;
+      var modules;
+
+      beyo.on('moduleLoadConflict', function (module, evt) {
+        module.should.have.ownProperty('name').equal('test');
+        module.should.have.ownProperty('description').equal('Beyo simple-app\'s default test module (conflict)');
+        conflictDetected = true;
+      });
+
+      modules = yield loader(beyo, configOptions);
+
+      conflictDetected.should.be.true;
+
+      modules.should.have.ownProperty('test').be.an.Object;
+      modules.test.should.have.ownProperty('name').equal('test');
+      modules.test.should.have.ownProperty('description').equal('Beyo simple-app\'s default test module');
+    });
 
 
+    it('should emit error on missing module dependency', function * () {
+      var beyo = new BeyoMock();
+      var configOptions = {
+        path: 'simple-app/app/modules'
+      };
+      var errorDetected = false;
+
+      beyo.on('moduleLoadError', function (err, evt) {
+        err.should.be.an.Error;
+
+        if (err.message === 'Missing module: invalid-dependency-module-that-do-not-exist') {
+          evt.moduleName.should.equal('invalid-dependency-module-that-do-not-exist');
+
+          errorDetected = true;
+        }
+      });
+
+      yield loader(beyo, configOptions);
+
+      errorDetected.should.be.true;
+    });
+
+    it('should emit error on cyclical module dependencies', function * () {
+      var beyo = new BeyoMock();
+      var configOptions = {
+        path: 'simple-app/app/modules'
+      };
+      var errorDetected = false;
+
+      beyo.on('moduleLoadError', function (err, evt) {
+        err.should.be.an.Error;
+
+        if (err.message === 'Cyclical dependency found in dependency-test') {
+          evt.moduleName.should.equal('dependency-test');
+
+          errorDetected = true;
+        }
+      });
+
+      yield loader(beyo, configOptions);
+
+      errorDetected.should.be.true;
+    });
+
+
+  });
 
 });

@@ -8,15 +8,22 @@ GLOBAL.assert = global.assert = require('assert');
 GLOBAL.__root = global.__root = path.resolve(__dirname, '..');
 
 
-GLOBAL.BeyoMock = global.BeyoMock = function BeyoMock() {
+GLOBAL.BeyoMock = global.BeyoMock = function BeyoMock(requireCallback) {
   this.appRequire = function (module) {
     var modulePath = path.resolve(this.appRoot, module);
+    var mod;
 
     if (require.cache[modulePath]) {
       delete require.cache[modulePath];
     }
 
-    return require(modulePath);
+    mod = require(modulePath);
+
+    if (requireCallback) {
+      requireCallback(mod, module, modulePath);
+    }
+
+    return mod;
   };
   this.appRoot = path.resolve(__dirname, 'fixtures');
   this.env = 'test';
