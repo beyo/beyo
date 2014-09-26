@@ -110,14 +110,71 @@ describe('Test Plugins Loader', function () {
 
   it('should load plugins', function * () {
     var beyo = new BeyoMock();
-    var configOptions = {
+    var pluginsOptions = {
       path: 'simple-app/plugins'
     };
-    var plugins = yield loader(beyo, configOptions);
-
-    //console.log(plugins);
+    var plugins = yield loader(beyo, pluginsOptions);
 
     plugins.should.have.ownProperty('foo').and.be.a.Function;
+
+  });
+
+  it('should disable plugins', function * () {
+    var beyo = new BeyoMock();
+    var pluginsOptions = {
+      path: 'simple-app/plugins',
+      plugins: {
+        foo: false
+      }
+    };
+    var plugins = yield loader(beyo, pluginsOptions);
+
+    plugins.should.not.have.ownProperty('foo');
+
+  });
+
+  it('should fail with invalid alias', function * () {
+    var invalidPluginAliasses = [
+      undefined, null, true, void 0, 0, 1, {}, [], /./, function () {}
+    ];
+    var beyo = new BeyoMock();
+    var pluginsOptions = {
+      path: 'simple-app/plugins',
+      plugins: {}
+    };
+    var hasError;
+    var plugins;
+
+    beyo.on('pluginLoadError', function (err, evt) {
+      err.should.be.an.Error.and.have.ownProperty('message').startWith('Plugin map value must be a string');
+
+      hasError = true;
+    });
+
+    for (var i = 0, iLen = invalidPluginAliasses.length; i < iLen; ++i) {
+      hasError = false;
+      pluginsOptions.plugins.foo = invalidPluginAliasses[i];
+
+      plugins = yield loader(beyo, pluginsOptions);
+
+      hasError.should.be.true;
+      plugins.should.not.have.ownProperty('foo');
+    }
+  });
+
+  it('should define alias', function * () {
+    var beyo = new BeyoMock();
+    var pluginsOptions = {
+      path: 'simple-app/plugins',
+      plugins: {
+        foo: 'bar'
+      }
+    };
+    var plugins = yield loader(beyo, pluginsOptions);
+
+    plugins.should.have.ownProperty('foo');
+    plugins.should.have.ownProperty('bar');
+    plugins.foo.should.equal(plugins.bar);
 
   });
 
