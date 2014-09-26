@@ -121,6 +121,17 @@ describe('Test Config Loader', function () {
 
   });
 
+  it('should sanitize keys with dots', function * () {
+    var beyo = new BeyoMock();
+    var configOptions = {
+      path: 'simple-app/app/conf'
+    };
+    var config = yield loader(beyo, configOptions);
+
+    config.should.have.ownProperty('config.with.dot').and.have.ownProperty('dot.test').be.true;
+
+  });
+
   describe('Config loader events', function () {
 
     var beyo = new BeyoMock();

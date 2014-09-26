@@ -186,7 +186,7 @@ describe('Test Models Loader', function () {
     context.__models.should.have.ownProperty('foo').and.be.true;
     context.__models.should.have.ownProperty('noresult').and.be.true;
 
-    models.should.have.ownProperty('foo').and.eql({ foo: 'bar' });
+    models.should.have.ownProperty('Foo').and.eql({ foo: 'bar' });
 
     models.should.not.have.ownProperty('noresult');
 
@@ -210,7 +210,7 @@ describe('Test Models Loader', function () {
 
       Object.keys(eventsFired).should.have.lengthOf(3);
 
-      models.should.have.ownProperty('foo').and.eql({ foo: 'bar' });
+      models.should.have.ownProperty('Foo').and.eql({ foo: 'bar' });
     });
 
     it('should emit `modelLoad`', function () {
