@@ -10,7 +10,7 @@ GLOBAL.__root = global.__root = path.resolve(__dirname, '..');
 
 GLOBAL.BeyoMock = global.BeyoMock = function BeyoMock(requireCallback) {
   this.appRequire = function (module) {
-    var modulePath = path.resolve(this.appRoot, module);
+    var modulePath = path.resolve(this.rootPath, module);
     var mod;
 
     if (require.cache[modulePath]) {
@@ -25,7 +25,7 @@ GLOBAL.BeyoMock = global.BeyoMock = function BeyoMock(requireCallback) {
 
     return mod;
   };
-  this.appRoot = path.resolve(__dirname, 'fixtures');
+  this.rootPath = path.resolve(__dirname, 'fixtures');
   this.env = 'test';
 };
 require('util').inherits(BeyoMock, require('events').EventEmitter);
