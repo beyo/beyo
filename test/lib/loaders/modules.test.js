@@ -219,7 +219,9 @@ describe('Test Modules Loader', function () {
         beyo.on('moduleLoadError', function (err, evt) {
           err.should.be.an.Error;
 
-          if (err.message === 'Invalid module name at: simple-app/app/error-modules/missing-name') {
+          if (err.message === 'Invalid module name: ' + String(invalidName)) {
+            errorDetected = true;
+          } else if (err.message === 'Module name must be a string at: simple-app/app/error-modules/missing-name') {
             errorDetected = true;
           }
         });

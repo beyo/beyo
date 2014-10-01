@@ -146,7 +146,7 @@ describe('Test Plugins Loader', function () {
     var plugins;
 
     beyo.on('pluginLoadError', function (err, evt) {
-      err.should.be.an.Error.and.have.ownProperty('message').startWith('Plugin map value must be a string');
+      err.should.be.an.Error.and.have.ownProperty('message').startWith('Plugin map value must be a non-empty string');
 
       hasError = true;
     });
@@ -167,15 +167,166 @@ describe('Test Plugins Loader', function () {
     var pluginsOptions = {
       path: 'simple-app/plugins',
       plugins: {
-        foo: 'bar'
+        foo: 'foo123'
       }
     };
     var plugins = yield loader(beyo, pluginsOptions);
 
     plugins.should.have.ownProperty('foo');
+    plugins.should.have.ownProperty('foo123');
     plugins.should.have.ownProperty('bar');
-    plugins.foo.should.equal(plugins.bar);
+    plugins.should.not.have.ownProperty('morePlugins.empty');
+    plugins.should.have.ownProperty('morePlugins.buz');
+    plugins.foo.should.equal(plugins.foo123).and.not.equal(plugins.bar);
+    plugins['morePlugins.buz'].should.not.equal(plugins.bar).and.not.equal(plugins.foo);
+
+    beyo.__plugins.bar.should.be.true;
+    beyo.__plugins.buz.should.be.true;
+    beyo.__plugins.foo.should.be.true;
+    beyo.__plugins.empty.should.be.true;
 
   });
 
+  it('should return nothing on invalid path', function * () {
+    var beyo = new BeyoMock();
+    var pluginsOptions = {
+      path: 'some-invalid-path'
+    };
+    var plugins = yield loader(beyo, pluginsOptions);
+
+    plugins.should.eql({});
+  });
+
+  describe('Plugin aliasses', function () {
+
+    it('should throw error with two alias on different plugins', function * () {
+      var beyo = new BeyoMock();
+      var pluginsOptions = {
+        path: 'simple-app/plugins',
+        plugins: {
+          foo: 'test',
+          bar: 'test'
+        }
+      };
+      var plugins;
+      var hasError = false;
+
+      beyo.on('pluginLoadError', function (err, evt) {
+        err.should.be.an.Error;
+        err.message.should.equal('Duplicate plugin alias: test');
+
+        hasError = true;
+      });
+
+      plugins = yield loader(beyo, pluginsOptions);
+
+      hasError.should.be.true;
+
+      plugins.should.have.ownProperty('bar');
+      plugins.should.have.ownProperty('test');
+      plugins.bar.should.equal(plugins.test);
+    });
+
+    it('should emit conflict on alias override', function * () {
+      var beyo = new BeyoMock();
+      var pluginsOptions = {
+        path: 'simple-app/plugins',
+        plugins: {
+          bar: 'foo'
+        }
+      };
+      var plugins;
+      var hasConflict = false;
+
+      beyo.on('pluginLoadConflict', function (evt) {
+        evt.pluginName.should.equal('foo');
+        hasConflict = true;
+      });
+
+      plugins = yield loader(beyo, pluginsOptions);
+
+      hasConflict.should.be.true;
+
+      plugins.should.have.ownProperty('bar');
+      plugins.should.have.ownProperty('foo');
+      plugins.bar.should.equal(plugins.foo);
+
+    });
+
+    it('should NOT emit conflict on alias override', function * () {
+      var beyo = new BeyoMock();
+      var pluginsOptions = {
+        path: 'simple-app/plugins',
+        plugins: {
+          bar: 'foo',
+          foo: 'my.meh'
+        }
+      };
+      var plugins;
+      var hasConflict = false;
+
+      beyo.on('pluginLoadConflict', function (evt) {
+        hasConflict = true;
+      });
+
+      plugins = yield loader(beyo, pluginsOptions);
+
+      hasConflict.should.be.false;
+
+      plugins.should.have.ownProperty('bar');
+      plugins.should.have.ownProperty('foo');
+      plugins.bar.should.equal(plugins.foo);
+
+      plugins.should.have.ownProperty('my.meh');
+
+    });
+  });
+
+  describe('Plugins loader events', function () {
+
+    var beyo = new BeyoMock();
+    var moduleName = 'test' + Date.now();
+    var pluginsOptions = {
+      path: 'simple-app/plugins',
+      plugins: {
+        bar: 'foo',
+        'morePlugins.empty': 'bar',
+        'morePlugins.buz': 'morePlugins.buz'
+      }
+    };
+    var plugins;
+    var eventsFired = {};
+
+    after(function * () {
+      plugins = yield loader(beyo, pluginsOptions);
+
+      Object.keys(eventsFired).should.have.lengthOf(4);
+
+      // plugins...
+    });
+
+    it('should emit `pluginLoad`', function () {
+      beyo.on('pluginLoad', function (evt) {
+        eventsFired['pluginLoad'] = true;
+      });
+    });
+    it('should emit `pluginLoadConflict`', function () {
+      beyo.on('pluginLoadConflict', function (key, src, dest, evt) {
+        //key.should.equal('conflictKey');
+        eventsFired['pluginLoadConflict'] = true;
+      });
+    });
+    it('should emit `pluginLoadError`', function () {
+      beyo.on('pluginLoadError', function (err, evt) {
+        err.should.be.an.Error;
+        eventsFired['pluginLoadError'] = true;
+      });
+    });
+    it('should emit `pluginLoadComplete`', function () {
+      beyo.on('pluginLoadComplete', function (evt) {
+        eventsFired['pluginLoadComplete'] = true;
+      });
+    });
+
+  });
 });

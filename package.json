@@ -33,6 +33,7 @@
   },
   "preferGlobal": "true",
   "dependencies": {
+    "camel-case": "^1.0.2",
     "chalk": "^0.5.1",
     "co": "~3.1.0",
     "co-fs": "~1.2.0",

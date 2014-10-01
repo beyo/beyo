@@ -1,8 +1,8 @@
 
 
-describe('Test Models Loader', function () {
+describe('Test Services Loader', function () {
 
-  var loader = require(__root + '/lib/loaders/models');
+  var loader = require(__root + '/lib/loaders/services');
   var TestError = require('error-factory')('beyo.testing.TestError');
 
   it('should fail when no options specified', function * () {
@@ -57,7 +57,7 @@ describe('Test Models Loader', function () {
       } else {
         e.should.be.an.Error
           .and.have.property('message')
-          .equal('Models path not specified');
+          .equal('Controllers path not specified');
       }
     }
   });
@@ -168,71 +168,70 @@ describe('Test Models Loader', function () {
   });
 
 
-  it('should load models', function * () {
+  it('should load services', function * () {
     var beyo = new BeyoMock();
     var context = new ModuleContextMock();
     var options = {
-      path: 'simple-app/app/modules/test/models',
+      path: 'simple-app/app/modules/test/services',
       moduleName: 'test',
       context: context
     };
-    var models = yield loader(beyo, options);
+    var services = yield loader(beyo, options);
 
-    beyo.should.have.ownProperty('__models');
-    beyo.__models.should.have.ownProperty('foo').and.be.true;
-    beyo.__models.should.have.ownProperty('noresult').and.be.true;
+    //beyo.should.have.ownProperty('__services');
+    //beyo.__controllers.should.have.ownProperty('index').and.be.true;
 
-    context.should.have.ownProperty('__models');
-    context.__models.should.have.ownProperty('foo').and.be.true;
-    context.__models.should.have.ownProperty('noresult').and.be.true;
+    //context.should.have.ownProperty('__controllers');
+    //context.__controllers.should.have.ownProperty('index').and.be.true;
 
-    models.should.have.ownProperty('test/Foo').and.eql({ foo: 'bar' });
+    //controllers.should.have.ownProperty('test/index').and.equal('index');
 
-    models.should.not.have.ownProperty('test/Noresult');
+    //controllers.should.not.have.property('test/error');
+    //controllers.should.not.have.property('test/noreturn');
 
   });
 
 
-  describe('Model loader events', function () {
+  describe('Services loader events', function () {
 
     var beyo = new BeyoMock();
     var context = new ModuleContextMock();
     var options = {
-      path: 'simple-app/app/modules/test/models',
-      moduleName: 'test2',
+      path: 'simple-app/app/modules/test/services',
+      moduleName: 'test',
       context: context
     };
-    var models;
+    var services;
     var eventsFired = {};
 
     after(function * () {
-      models = yield loader(beyo, options);
+      services = yield loader(beyo, options);
 
       Object.keys(eventsFired).should.have.lengthOf(3);
 
-      models.should.have.ownProperty('test2/Foo').and.eql({ foo: 'bar' });
+      services.should.have.ownProperty('test/index').and.equal('index');
     });
 
-    it('should emit `modelLoad`', function () {
-      beyo.on('modelLoad', function (evt) {
+    it('should emit `serviceLoad`', function () {
+      beyo.on('serviceLoad', function (evt) {
         evt.moduleName.should.equal(options.moduleName);
 
-        eventsFired['modelLoad'] = true;
+        eventsFired['serviceLoad'] = true;
       });
     });
-    it('should emit `modelLoadError`', function () {
-      beyo.on('modelLoadError', function (err, evt) {
+    it('should emit `serviceLoadError`', function () {
+      beyo.on('serviceLoadError', function (err, evt) {
         err.should.be.an.Error;
         evt.moduleName.should.equal(options.moduleName);
 
-        eventsFired['modelLoadError'] = true;
+        eventsFired['serviceLoadError'] = true;
       });
     });
-    it('should emit `modelLoadComplete`', function () {
-      beyo.on('modelLoadComplete', function (evt) {
+    it('should emit `serviceLoadComplete`', function () {
+      beyo.on('serviceLoadComplete', function (evt) {
         evt.moduleName.should.equal(options.moduleName);
 
-        eventsFired['modelLoadComplete'] = true;
+        eventsFired['serviceLoadComplete'] = true;
       });
     });
 

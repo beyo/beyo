@@ -184,15 +184,15 @@ describe('Test Controllers Loader', function () {
     context.should.have.ownProperty('__controllers');
     context.__controllers.should.have.ownProperty('index').and.be.true;
 
-    controllers.should.have.ownProperty('index').and.equal('index');
+    controllers.should.have.ownProperty('test/index').and.equal('index');
 
-    controllers.should.not.have.property('error');
-    controllers.should.not.have.property('noreturn');
+    controllers.should.not.have.property('test/error');
+    controllers.should.not.have.property('test/noreturn');
 
   });
 
 
-  describe('Controller loader events', function () {
+  describe('Controllers loader events', function () {
 
     var beyo = new BeyoMock();
     var context = new ModuleContextMock();
@@ -209,7 +209,7 @@ describe('Test Controllers Loader', function () {
 
       Object.keys(eventsFired).should.have.lengthOf(3);
 
-      controllers.should.have.ownProperty('index').and.equal('index');
+      controllers.should.have.ownProperty('test/index').and.equal('index');
     });
 
     it('should emit `controllerLoad`', function () {
