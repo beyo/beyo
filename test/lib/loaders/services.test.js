@@ -178,17 +178,19 @@ describe('Test Services Loader', function () {
     };
     var services = yield loader(beyo, options);
 
-    //beyo.should.have.ownProperty('__services');
-    //beyo.__controllers.should.have.ownProperty('index').and.be.true;
+    beyo.should.have.ownProperty('__services');
+    beyo.__services.should.have.ownProperty('error').and.be.true;
+    beyo.__services.should.have.ownProperty('index').and.be.true;
+    beyo.__services.should.have.ownProperty('noreturn').and.be.true;
 
-    //context.should.have.ownProperty('__controllers');
-    //context.__controllers.should.have.ownProperty('index').and.be.true;
+    context.should.have.ownProperty('__services');
+    context.__services.should.not.have.ownProperty('error');
+    context.__services.should.have.ownProperty('index').and.be.true;
+    context.__services.should.have.ownProperty('noreturn');
 
-    //controllers.should.have.ownProperty('test/index').and.equal('index');
-
-    //controllers.should.not.have.property('test/error');
-    //controllers.should.not.have.property('test/noreturn');
-
+    services.should.not.have.ownProperty('test/error');
+    services.should.have.ownProperty('test/index').and.equal('index');
+    services.should.not.have.ownProperty('test/noreturn');
   });
 
 
