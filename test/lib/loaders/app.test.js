@@ -3,6 +3,7 @@
 describe('Test Services Loader', function () {
 
   var loader = require(__root + '/lib/loaders/app');
+  var should = require('should');
   var TestError = require('error-factory')('beyo.testing.TestError');
 
   it('should fail when no options specified', function * () {
@@ -86,48 +87,74 @@ describe('Test Services Loader', function () {
   });
 
 
-  it('should load app');
-
-
-  describe('App loader events', function () {
-
+  it('should laod app', function * () {
     var beyo = new BeyoMock();
     var options = {
       path: 'simple-app/app'
     };
     var app;
-    var eventsFired = {};
-/*
-    after(function * () {
-      app = yield loader(beyo, options);
+    var events = {};
 
-      Object.keys(eventsFired).should.have.lengthOf(3);
-
-      services.should.have.ownProperty('test/index').and.equal('index');
-    });
-
-    it('should emit `serviceLoad`', function () {
-      beyo.on('serviceLoad', function (evt) {
-        evt.moduleName.should.equal(options.moduleName);
-
-        eventsFired['serviceLoad'] = true;
+    ['appLoad', 'appLoadError', 'appLoadComplete'].forEach(function (eventKey) {
+      beyo.on(eventKey, function (evt) {
+        events[eventKey] = true;
       });
     });
-    it('should emit `serviceLoadError`', function () {
-      beyo.on('serviceLoadError', function (err, evt) {
-        err.should.be.an.Error;
-        evt.moduleName.should.equal(options.moduleName);
 
-        eventsFired['serviceLoadError'] = true;
-      });
-    });
-    it('should emit `serviceLoadComplete`', function () {
-      beyo.on('serviceLoadComplete', function (evt) {
-        evt.moduleName.should.equal(options.moduleName);
+    app = yield loader(beyo, options);
 
-        eventsFired['serviceLoadComplete'] = true;
-      });
-    });*/
+    app.should.equal('app');
 
+    events.should.have.ownProperty('appLoad');
+    events.should.have.ownProperty('appLoadComplete');
+    events.should.not.have.ownProperty('appLoadError');
   });
+
+
+  it('should ignore missing app init module', function * () {
+    var beyo = new BeyoMock();
+    var options = {
+      path: 'simple-app/app'
+    };
+    var app;
+    var events = {};
+
+    ['appLoad', 'appLoadError', 'appLoadComplete'].forEach(function (eventKey) {
+      beyo.on(eventKey, function (evt) {
+        events[eventKey] = true;
+      });
+    });
+
+    app = yield loader(beyo, options);
+
+    should(app).be.undefined;
+
+    events.should.have.ownProperty('appLoad');
+    events.should.have.ownProperty('appLoadComplete');
+    events.should.not.have.ownProperty('appLoadError');
+  });
+
+  it('should not laod on error', function * () {
+    var beyo = new BeyoMock();
+    var options = {
+      path: 'simple-app/app-error'
+    };
+    var app;
+    var events = {};
+
+    ['appLoad', 'appLoadError', 'appLoadComplete'].forEach(function (eventKey) {
+      beyo.on(eventKey, function (evt) {
+        events[eventKey] = true;
+      });
+    });
+
+    app = yield loader(beyo, options);
+
+    should(app).be.undefined;
+
+    events.should.have.ownProperty('appLoad');
+    events.should.not.have.ownProperty('appLoadComplete');
+    events.should.have.ownProperty('appLoadError');
+  });
+
 });

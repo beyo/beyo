@@ -46,11 +46,11 @@
     "github-download": "^0.3.0",
     "merge": "^1.2.0",
     "nodemon": "~1.2.1",
-    "npm": "^1.4.27",
+    "npm": "^2.1.2",
     "pascal-case": "^1.0.0",
     "tmp": "0.0.24",
-    "var-validator": "0.0.2",
-    "winston": "~0.8.0"
+    "var-validator": "0.0.3",
+    "winston": "~0.8.1"
   },
   "devDependencies": {
     "co-mocha": "^1.0.1",
