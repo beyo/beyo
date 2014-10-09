@@ -1,8 +1,4 @@
 
-var co = require('co');
-var fs = require('co-fs');
-var pathJoin = require('path').join;
-
 module.exports = function init(command, actionWrapper) {
   command
     .description('Start the application')
@@ -16,19 +12,12 @@ function * _startAction(beyo, args, options) {
 
   yield beyo.init();
 
-  // listen
-  beyo.start();
-
   return true;
 }
 
 function terminate(beyo) {
   return function _terminate(code, signal) {
     beyo.logger.log('info', 'Interruption signal received, shutting down now');
-
-    if (beyo.isListening) {
-      beyo.stop();
-    }
 
     process.exit(code || 0);
   };

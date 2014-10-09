@@ -8,11 +8,11 @@ var fs = require('fs');
 var path = require('path');
 var program = require('commander');
 var actioNWrapper = require('../lib/commands');
+var commandPaths = [ path.join(__dirname, 'commands') ];
 
-var commandPaths = [
-  path.join(__dirname, 'commands'),
-  path.join(process.cwd(), 'bin', 'commands')
-];
+if (path.join(process.cwd(), 'bin') !== __dirname) {
+  commandPaths.push(path.join(process.cwd(), 'bin', 'commands'));
+}
 
 require('../lib/io/console');
 

@@ -3,12 +3,17 @@
 [![Build Status](https://travis-ci.org/beyo/beyo.svg?branch=dev)](https://travis-ci.org/beyo/beyo)
 [![Coverage Status](https://coveralls.io/repos/beyo/beyo/badge.png?branch=dev)](https://coveralls.io/r/beyo/beyo?branch=dev)
 
-Beyo Application framework built on top of koa and other goodies.
+Small Application Framework, Great possibilities.
 
 
 ## DEV-BRANCH
 
 This is the development branch of the framework. Take a look at the [issues](https://github.com/beyo/beyo/labels/dev-branch) for upcoming changes and the [milestones](https://github.com/beyo/beyo/milestones/1.0) for release ETA.
+
+
+## Documentation
+
+For documentation, examples and tutorial, click [here](http://beyo.github.io/).
 
 
 ## Contribution
