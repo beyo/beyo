@@ -11,8 +11,6 @@ function * _startAction(beyo, args, options) {
   process.on('SIGINT', terminate(beyo));
 
   yield beyo.init();
-
-  return true;
 }
 
 function terminate(beyo) {

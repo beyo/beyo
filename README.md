@@ -6,11 +6,6 @@
 Small Application Framework, Great possibilities.
 
 
-## DEV-BRANCH
-
-This is the development branch of the framework. Take a look at the [issues](https://github.com/beyo/beyo/labels/dev-branch) for upcoming changes and the [milestones](https://github.com/beyo/beyo/milestones/1.0) for release ETA.
-
-
 ## Documentation
 
 For documentation, examples and tutorial, click [here](http://beyo.github.io/).

@@ -1,6 +1,6 @@
 {
   "name": "beyo",
-  "version": "1.0.0-alpha.20140916",
+  "version": "1.0.0-RC",
   "description": "Beyo Application framework.",
   "author": "Yanick Rochon <yanick.rochon@gmail.com>",
   "license": "MIT",
@@ -40,7 +40,7 @@
     "co-glob": "~0.0.2",
     "co-parallel": "^1.0.0",
     "co-suspend": "^0.1.6",
-    "commander": "^2.3.0",
+    "commander": "^2.5.0",
     "error-factory": "0.1.4",
     "fs-extra": "^0.12.0",
     "merge": "^1.2.0",
@@ -51,8 +51,8 @@
     "winston": "~0.8.1"
   },
   "devDependencies": {
-    "co-mocha": "^1.0.1",
+    "co-mocha": "^1.0.3",
     "istanbul-harmony": "^0.3.0",
-    "should": "^4.0.4"
+    "should": "^4.1.0"
   }
 }
