@@ -9,7 +9,7 @@ GLOBAL.__root = global.__root = path.resolve(__dirname, '..');
 
 
 GLOBAL.BeyoMock = global.BeyoMock = function BeyoMock(requireCallback) {
-  this.appRequire = function (module) {
+  this.require = function (module) {
     var modulePath = path.resolve(this.rootPath, module);
     var mod;
 

@@ -37,8 +37,8 @@ describe('Beyo Application Framework', function () {
       testBeyo.isInitializing.should.be.false;
       testBeyo.isReady.should.be.true;
 
-      // if the fixture was called, then `init` was invoked, and we should have an appRequire function!
-      testBeyo.appRequire.should.be.a.Function;
+      // if the fixture was called, then `init` was invoked, and we should have an require function!
+      testBeyo.require.should.be.a.Function;
     });
 
     it('should have loaded app', function () {

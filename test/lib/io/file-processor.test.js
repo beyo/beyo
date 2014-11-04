@@ -289,8 +289,8 @@ describe('Test File Processor', function () {
       }
     });
 
-    originalContent = beyo.appRequire(path.join('install', 'test-tokens.json'));
-    content = beyo.appRequire(path.join(tmpDir, 'foo.json'));
+    originalContent = beyo.require(path.join('install', 'test-tokens.json'));
+    content = beyo.require(path.join(tmpDir, 'foo.json'));
 
     originalContent.should.not.eql(content);
 
@@ -323,8 +323,8 @@ describe('Test File Processor', function () {
       }
     });
 
-    originalContent = beyo.appRequire(path.join('install', 'test-tokens.json'));
-    content = beyo.appRequire(path.join(tmpDir, 'foo.json'));
+    originalContent = beyo.require(path.join('install', 'test-tokens.json'));
+    content = beyo.require(path.join(tmpDir, 'foo.json'));
 
     content.should.eql(originalContent);
   });
