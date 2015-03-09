@@ -4,7 +4,6 @@ describe('Beyo Application Framework', function () {
 
   var testPath = process.cwd();;
 
-  var co = require('co');
   var Beyo;
 
   before(function () {
@@ -28,26 +27,27 @@ describe('Beyo Application Framework', function () {
       testBeyo = new Beyo()
     });
 
-    it('should initialize', function * () {
+    it('should initialize', function (done) {
       testBeyo.isInitializing.should.be.false;
-      testBeyo.isReady.should.be.false;
 
-      yield testBeyo.init();
+      testBeyo.init().then(function () {
+        testBeyo.isInitializing.should.be.false;
 
-      testBeyo.isInitializing.should.be.false;
-      testBeyo.isReady.should.be.true;
+        // if the fixture was called, then `init` was invoked, and we should have an require function!
+        testBeyo.require.should.be.a.Function;
 
-      // if the fixture was called, then `init` was invoked, and we should have an require function!
-      testBeyo.require.should.be.a.Function;
+        done();
+      }).catch(function (err) {
+        done(err);
+      });
     });
 
-    it('should have loaded app', function () {
-      testBeyo.app.should.equal('app');
-    });
-
-    it('should have processed post init handlers', function () {
-      testBeyo.__postInitTestGenerator.should.be.true;
-      testBeyo.__postInitTestThunk.should.be.true;
+    it('should have loaded app', function (done) {
+      testBeyo.init().then(function () {
+        testBeyo.app.should.equal('app');
+      }).catch(function (err) {
+        done(err);
+      });
     });
 
     describe('Test plugins', function () {

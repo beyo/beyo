@@ -5,7 +5,7 @@ describe('Test Plugins Loader', function () {
   var loader = require(__root + '/lib/loaders/plugins');
   var TestError = require('error-factory')('beyo.testing.TestError');
 
-  it('should fail when no options specified', function * () {
+  it('should fail when no options specified'/*, function () {
     try {
       yield loader();
 
@@ -19,9 +19,9 @@ describe('Test Plugins Loader', function () {
           .equal('No options specified');
       }
     }
-  });
+  }*/);
 
-  it('should fail with invalid options value', function * () {
+  it('should fail with invalid options value'/*, function () {
     var invalidOptions = [
       null, true, false, 0, 1, '', 'abc', [], /./, function () {}
     ];
@@ -42,9 +42,9 @@ describe('Test Plugins Loader', function () {
         }
       }
     }
-  });
+  }*/);
 
-  it('should fail with no path specified', function * () {
+  it('should fail with no path specified'/*, function () {
     var beyo = new BeyoMock();
 
     try {
@@ -60,9 +60,9 @@ describe('Test Plugins Loader', function () {
           .equal('Plugins path not specified');
       }
     }
-  });
+  }*/);
 
-  it('should fail with invalid path value', function * () {
+  it('should fail with invalid path value'/*, function () {
     var invalidPaths = [
       undefined, null, true, false, void 0, 0, 1, {}, [], /./, function () {}
     ];
@@ -83,9 +83,9 @@ describe('Test Plugins Loader', function () {
         }
       }
     }
-  });
+  }*/);
 
-  it('should fail with invalid plugins value', function * () {
+  it('should fail with invalid plugins value'/*, function () {
     var invalidPlugins = [
       undefined, null, true, false, void 0, 0, 1, '', 'abc', '0', '1', [], /./, function () {}
     ];
@@ -106,9 +106,9 @@ describe('Test Plugins Loader', function () {
         }
       }
     }
-  });
+  }*/);
 
-  it('should load plugins', function * () {
+  it('should load plugins'/*, function () {
     var beyo = new BeyoMock();
     var pluginsOptions = {
       path: 'simple-app/plugins'
@@ -117,9 +117,9 @@ describe('Test Plugins Loader', function () {
 
     plugins.should.have.ownProperty('foo').and.be.a.Function;
 
-  });
+  }*/);
 
-  it('should disable plugins', function * () {
+  it('should disable plugins'/*, function () {
     var beyo = new BeyoMock();
     var pluginsOptions = {
       path: 'simple-app/plugins',
@@ -131,9 +131,9 @@ describe('Test Plugins Loader', function () {
 
     plugins.should.not.have.ownProperty('foo');
 
-  });
+  }*/);
 
-  it('should fail with invalid alias', function * () {
+  it('should fail with invalid alias'/*, function () {
     var invalidPluginAliasses = [
       undefined, null, true, void 0, 0, 1, {}, [], /./, function () {}
     ];
@@ -160,9 +160,9 @@ describe('Test Plugins Loader', function () {
       hasError.should.be.true;
       plugins.should.not.have.ownProperty('foo');
     }
-  });
+  }*/);
 
-  it('should define alias', function * () {
+  it('should define alias'/* , function () {
     var beyo = new BeyoMock();
     var pluginsOptions = {
       path: 'simple-app/plugins',
@@ -185,9 +185,9 @@ describe('Test Plugins Loader', function () {
     beyo.__plugins.foo.should.be.true;
     beyo.__plugins.empty.should.be.true;
 
-  });
+  }*/);
 
-  it('should return nothing on invalid path', function * () {
+  it('should return nothing on invalid path'/*, function () {
     var beyo = new BeyoMock();
     var pluginsOptions = {
       path: 'some-invalid-path'
@@ -195,11 +195,11 @@ describe('Test Plugins Loader', function () {
     var plugins = yield loader(beyo, pluginsOptions);
 
     plugins.should.eql({});
-  });
+  }*/);
 
   describe('Plugin aliasses', function () {
 
-    it('should throw error with two alias on different plugins', function * () {
+    it('should throw error with two alias on different plugins'/*, function () {
       var beyo = new BeyoMock();
       var pluginsOptions = {
         path: 'simple-app/plugins',
@@ -225,9 +225,9 @@ describe('Test Plugins Loader', function () {
       plugins.should.have.ownProperty('bar');
       plugins.should.have.ownProperty('test');
       plugins.bar.should.equal(plugins.test);
-    });
+    }*/);
 
-    it('should emit conflict on alias override', function * () {
+    it('should emit conflict on alias override'/*, function () {
       var beyo = new BeyoMock();
       var pluginsOptions = {
         path: 'simple-app/plugins',
@@ -251,9 +251,9 @@ describe('Test Plugins Loader', function () {
       plugins.should.have.ownProperty('foo');
       plugins.bar.should.equal(plugins.foo);
 
-    });
+    }*/);
 
-    it('should NOT emit conflict on alias override', function * () {
+    it('should NOT emit conflict on alias override'/*, function () {
       var beyo = new BeyoMock();
       var pluginsOptions = {
         path: 'simple-app/plugins',
@@ -279,7 +279,7 @@ describe('Test Plugins Loader', function () {
 
       plugins.should.have.ownProperty('my.meh');
 
-    });
+    }*/);
   });
 
   describe('Plugins loader events', function () {
@@ -297,36 +297,38 @@ describe('Test Plugins Loader', function () {
     var plugins;
     var eventsFired = {};
 
-    after(function * () {
+    /*
+    after(function () {
       plugins = yield loader(beyo, pluginsOptions);
 
       Object.keys(eventsFired).should.have.lengthOf(4);
 
       // plugins...
     });
+    */
 
-    it('should emit `pluginLoad`', function () {
+    it('should emit `pluginLoad`'/*, function () {
       beyo.on('pluginLoad', function (evt) {
         eventsFired['pluginLoad'] = true;
       });
-    });
-    it('should emit `pluginLoadConflict`', function () {
+    }*/);
+    it('should emit `pluginLoadConflict`'/*, function () {
       beyo.on('pluginLoadConflict', function (key, src, dest, evt) {
         //key.should.equal('conflictKey');
         eventsFired['pluginLoadConflict'] = true;
       });
-    });
-    it('should emit `pluginLoadError`', function () {
+    }*/);
+    it('should emit `pluginLoadError`'/*, function () {
       beyo.on('pluginLoadError', function (err, evt) {
         err.should.be.an.Error;
         eventsFired['pluginLoadError'] = true;
       });
-    });
-    it('should emit `pluginLoadComplete`', function () {
+    }*/);
+    it('should emit `pluginLoadComplete`'/*, function () {
       beyo.on('pluginLoadComplete', function (evt) {
         eventsFired['pluginLoadComplete'] = true;
       });
-    });
+    }*/);
 
   });
 });

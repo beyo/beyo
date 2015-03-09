@@ -5,7 +5,7 @@ describe('Test Services Loader', function () {
   var loader = require(__root + '/lib/loaders/services');
   var TestError = require('error-factory')('beyo.testing.TestError');
 
-  it('should fail when no options specified', function * () {
+  it('should fail when no options specified'/*, function () {
     try {
       yield loader();
 
@@ -19,9 +19,9 @@ describe('Test Services Loader', function () {
           .equal('No options specified');
       }
     }
-  });
+  }*/);
 
-  it('should fail with invalid options value', function * () {
+  it('should fail with invalid options value'/*, function () {
     var invalidOptions = [
       null, true, false, 0, 1, '', 'abc', [], /./, function () {}
     ];
@@ -42,9 +42,9 @@ describe('Test Services Loader', function () {
         }
       }
     }
-  });
+  }*/);
 
-  it('should fail with no path specified', function * () {
+  it('should fail with no path specified'/*, function () {
     var beyo = new BeyoMock();
 
     try {
@@ -60,9 +60,9 @@ describe('Test Services Loader', function () {
           .equal('Controllers path not specified');
       }
     }
-  });
+  }*/);
 
-  it('should fail with invalid path value', function * () {
+  it('should fail with invalid path value'/*, function () {
     var invalidPaths = [
       undefined, null, true, false, void 0, 0, 1, {}, [], /./, function () {}
     ];
@@ -83,9 +83,9 @@ describe('Test Services Loader', function () {
         }
       }
     }
-  });
+  }*/);
 
-  it('should faile with no module name specified', function * () {
+  it('should faile with no module name specified'/*, function () {
     var beyo = new BeyoMock();
 
     try {
@@ -101,9 +101,9 @@ describe('Test Services Loader', function () {
           .equal('Module name not specified');
       }
     }
-  });
+  }*/);
 
-  it('should fail with invalid module name', function * () {
+  it('should fail with invalid module name'/*, function () {
     var invalidPaths = [
       undefined, null, true, false, void 0, 0, 1, {}, [], /./, function () {}
     ];
@@ -124,9 +124,9 @@ describe('Test Services Loader', function () {
         }
       }
     }
-  });
+  }*/);
 
-  it('should fail with no context specified', function * () {
+  it('should fail with no context specified'/*, function () {
     var beyo = new BeyoMock();
 
     try {
@@ -142,9 +142,9 @@ describe('Test Services Loader', function () {
           .equal('Module context not specified');
       }
     }
-  });
+  }*/);
 
-  it('should fail with invalid context', function * () {
+  it('should fail with invalid context'/*, function () {
     var invalidContexts = [
       undefined, null, false, true, void 0, 0, 1, [], /./, function () {}, '', 'abc'
     ];
@@ -165,10 +165,10 @@ describe('Test Services Loader', function () {
         }
       }
     }
-  });
+  }*/);
 
 
-  it('should load services', function * () {
+  it('should load services'/*, function () {
     var beyo = new BeyoMock();
     var context = new ModuleContextMock();
     var options = {
@@ -191,7 +191,7 @@ describe('Test Services Loader', function () {
     services.should.not.have.ownProperty('test/error');
     services.should.have.ownProperty('test/index').and.equal('index');
     services.should.not.have.ownProperty('test/noreturn');
-  });
+  }*/);
 
 
   describe('Services loader events', function () {
@@ -206,36 +206,38 @@ describe('Test Services Loader', function () {
     var services;
     var eventsFired = {};
 
-    after(function * () {
+    /*
+    after(function () {
       services = yield loader(beyo, options);
 
       Object.keys(eventsFired).should.have.lengthOf(3);
 
       services.should.have.ownProperty('test/index').and.equal('index');
     });
+    */
 
-    it('should emit `serviceLoad`', function () {
+    it('should emit `serviceLoad`'/*, function () {
       beyo.on('serviceLoad', function (evt) {
         evt.moduleName.should.equal(options.moduleName);
 
         eventsFired['serviceLoad'] = true;
       });
-    });
-    it('should emit `serviceLoadError`', function () {
+    }*/);
+    it('should emit `serviceLoadError`'/*, function () {
       beyo.on('serviceLoadError', function (err, evt) {
         err.should.be.an.Error;
         evt.moduleName.should.equal(options.moduleName);
 
         eventsFired['serviceLoadError'] = true;
       });
-    });
-    it('should emit `serviceLoadComplete`', function () {
+    }*/);
+    it('should emit `serviceLoadComplete`'/*, function () {
       beyo.on('serviceLoadComplete', function (evt) {
         evt.moduleName.should.equal(options.moduleName);
 
         eventsFired['serviceLoadComplete'] = true;
       });
-    });
+    }*/);
 
   });
 });

@@ -1,91 +1,58 @@
 #!/usr/bin/env node
 
 /**
- * This tiny wrapper file checks for known node flags and appends them
- * when found, before invoking the "real" _mocha(1) executable.
+ * Module dependencies.
  */
 
 var fs = require('fs');
-var pathJoin = require('path').join;
-var relative = require('path').relative;
-var spawn = require('child_process').spawn;
-var debug = require('debug')('beyo');
-var args = [ '--harmony', pathJoin(__dirname, '_beyo.js') ];
-var mod_nodemon = false;
+var path = require('path');
+var program = require('commander');
+var actioNWrapper = require('../lib/commands');
+var commandPaths = [ path.join(__dirname, 'commands') ];
+
+require('../lib/io/console').initialize();
 
 
-process.argv.slice(2).forEach(function (arg){
-  var p = arg.split('=');
+if (path.join(process.cwd(), 'bin') !== __dirname) {
+  commandPaths.push(path.join(process.cwd(), 'bin', 'commands'));
+}
 
-  switch (p[0]) {
-    case '--nodemon':
-      mod_nodemon = true;
-      break;
+// options
+program
+  .version((function () {
+    var pkg = require(path.join(__dirname, '..', 'package'));
 
-    case '--appPath':
-      if (!p[1]) {
-        throw new Error("Missing path");
+    return pkg.name + '@' + pkg.version;
+  })())
+  .option('-v, --verbose', 'display a lot of initialization information', false)
+  .option('-s, --show-stack-trace', 'on error, show stack trace with message', false)
+  .option('-q, --quiet', 'do not display anything (ignores verbose)', false)
+  .option('-C, --no-color', 'disable color support', false)
+;
+
+// if no command given, push '-h' to get some help!
+if (!process.argv.slice(2).filter(function (arg) {
+  return arg.charAt(0) !== '-';
+}).length) {
+  process.argv.push('-h');
+}
+
+program.on('*', function (args) {
+  console.error('Unknown command :', args[0]);
+  console.error();
+  process.exit(1);
+});
+
+commandPaths.forEach(function (commandPath) {
+  if (fs.existsSync(commandPath)) {
+    fs.readdirSync(commandPath).sort(function (a, b) {
+      return a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase());
+    }).forEach(function (file) {
+      if (/\.js$/.test(file)) {
+        require(path.join(commandPath, file))(program.command(file.replace(/\.js$/, '')), actioNWrapper);
       }
-      console.log(p[1], typeof p[1]);
-      process.chdir(relative(process.cwd(), p[1]));
-      break;
-
-    default:
-      args.push(arg);
-      break;
+    });
   }
 });
 
-if (mod_nodemon) {
-  var nodemonConfig = pathJoin(process.cwd(), 'nodemon.json');
-
-  // FIXME : manually restarting the application throws an exception
-  //         see: https://github.com/remy/nodemon/issues/289
-  if (fs.existsSync(nodemonConfig)) {
-    nodemonConfig = require(nodemonConfig);
-  } else {
-    nodemonConfig = {};
-  }
-
-  nodemonConfig['script'] = args[1];
-  nodemonConfig['args'] = args.slice(2);
-  nodemonConfig['execMap'] =  {
-    'js': [process.argv[0], args[0]].join(' ')
-  };
-
-  var app = require('nodemon')(nodemonConfig);
-
-  debug('[nodemon] Starting application');
-
-  app
-  //.on('start', function () {
-  //  console.log('App has started');
-  //})
-  //.on('quit', function () {
-  //  console.log('App has quit');
-  //})
-  .on('restart', function (files) {
-    if (files) {
-      debug('[nodemon] %d file%s changed', files.length, files.length > 1 ? 's' : '');
-      files.forEach(function (file) {
-        debug('> %s', pathJoin('.', relative(process.cwd(), file)));
-      });
-    } else {
-      debug('[nodemon] manual restart requested');
-    }
-  });
-
-} else {
-
-  var proc = spawn(process.argv[0], args, { customFds: [0,1,2] });
-  proc.on('exit', function (code, signal) {
-    process.on('exit', function () {
-      if (signal) {
-        process.kill(process.pid, signal);
-      } else {
-        process.exit(code);
-      }
-    });
-  });
-
-}
+program.parse(process.argv);

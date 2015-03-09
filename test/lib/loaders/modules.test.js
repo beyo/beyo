@@ -7,7 +7,7 @@ describe('Test Modules Loader', function () {
 
   this.timeout(1000);
 
-  it('should fail when no options specified', function * () {
+  it('should fail when no options specified'/*, function () {
     try {
       yield loader();
 
@@ -21,9 +21,9 @@ describe('Test Modules Loader', function () {
           .equal('No options specified');
       }
     }
-  });
+  }*/);
 
-  it('should fail with invalid options value', function * () {
+  it('should fail with invalid options value'/*, function () {
     var invalidOptions = [
       null, true, false, 0, 1, '', 'abc', [], /./, function () {}
     ];
@@ -44,9 +44,9 @@ describe('Test Modules Loader', function () {
         }
       }
     }
-  });
+  }*/);
 
-  it('should fail with no path specified', function * () {
+  it('should fail with no path specified'/*, function () {
     var beyo = new BeyoMock();
 
     try {
@@ -62,9 +62,9 @@ describe('Test Modules Loader', function () {
           .equal('Modules path not specified');
       }
     }
-  });
+  }*/);
 
-  it('should fail with invalid path value', function * () {
+  it('should fail with invalid path value'/*, function () {
     var invalidPaths = [
       undefined, null, true, false, 0, 1, {}, [], /./, function () {}
     ];
@@ -85,9 +85,9 @@ describe('Test Modules Loader', function () {
         }
       }
     }
-  });
+  }*/);
 
-  it('should load modules', function * () {
+  it('should load modules'/*, function () {
     var beyo = new BeyoMock();
     var modules = yield loader(beyo, { path: 'simple-app/app/modules/' });
 
@@ -95,9 +95,9 @@ describe('Test Modules Loader', function () {
     modules.test.should.have.ownProperty('name').equal('test');
 
     beyo.__modules.test.should.be.true;
-  });
+  }*/);
 
-  it('should cleanup error\'ed modules', function * () {
+  it('should cleanup error\'ed modules'/*, function () {
     var beyo = new BeyoMock();
     var configOptions = {
       path: 'simple-app/app/modules'
@@ -109,7 +109,7 @@ describe('Test Modules Loader', function () {
 
     modules.should.have.ownProperty('test');
     modules.should.have.ownProperty('test-dependent');
-  });
+  }*/);
 
 
   describe('Modules loader events', function () {
@@ -120,42 +120,44 @@ describe('Test Modules Loader', function () {
     var modules;
     var eventsFired = {};
 
-    after(function * () {
+    /**
+    after(function () {
       modules = yield loader(beyo, configOptions);
 
       Object.keys(eventsFired).should.have.lengthOf(4);
     });
+    */
 
-    it('should emit `moduleLoad`', function () {
+    it('should emit `moduleLoad`'/*, function () {
       beyo.on('moduleLoad', function (evt) {
         eventsFired['moduleLoad'] = true;
       });
-    });
-    it('should emit `moduleLoadConflict`', function () {
+    }*/);
+    it('should emit `moduleLoadConflict`'/*, function () {
       beyo.on('moduleLoadConflict', function (module, evt) {
         module.should.be.an.Object;
 
         eventsFired['moduleLoadConflict'] = true;
       });
-    });
-    it('should emit `moduleLoadError`', function () {
+    }*/);
+    it('should emit `moduleLoadError`'/*, function () {
       beyo.on('moduleLoadError', function (err, evt) {
         err.should.be.an.Error;
 
         eventsFired['moduleLoadError'] = true;
       });
-    });
-    it('should emit `moduleLoadComplete`', function () {
+    }*/);
+    it('should emit `moduleLoadComplete`'/*, function () {
       beyo.on('moduleLoadComplete', function (evt) {
         eventsFired['moduleLoadComplete'] = true;
       });
-    });
+    }*/);
 
   });
 
   describe('Test errors in module.json', function () {
 
-    it('should emit error on require error', function * () {
+    it('should emit error on require error'/*, function () {
       var beyo = new BeyoMock();
       var configOptions = {
         path: 'simple-app/app/error-modules'
@@ -173,9 +175,9 @@ describe('Test Modules Loader', function () {
       yield loader(beyo, configOptions);
 
       errorDetected.should.be.true;
-    });
+    }*/);
 
-    it('should emit error on missing name', function * () {
+    it('should emit error on missing name'/*, function () {
       var beyo = new BeyoMock();
       var configOptions = {
         path: 'simple-app/app/error-modules'
@@ -193,9 +195,9 @@ describe('Test Modules Loader', function () {
       yield loader(beyo, configOptions);
 
       errorDetected.should.be.true;
-    });
+    }*/);
 
-    it('should emit error on invalid name', function * () {
+    it('should emit error on invalid name'/*, function () {
       var invalidNames = [
         undefined, null, false, true, void 0, 0, 1, /./, function () {}, '',
         '0', '1', '123', '/'  // TODO more invalid strings?
@@ -203,7 +205,7 @@ describe('Test Modules Loader', function () {
       var testQueue = [];
       var testCount = 0;
 
-      for (var i = 0, iLen = invalidNames.length; i < iLen; ++i) testQueue.push((function * (invalidName) {
+      for (var i = 0, iLen = invalidNames.length; i < iLen; ++i) testQueue.push((function (invalidName) {
         var beyo = new BeyoMock(replaceName);
         var configOptions = {
           path: 'simple-app/app/error-modules'
@@ -236,9 +238,9 @@ describe('Test Modules Loader', function () {
       yield testQueue;
 
       testCount.should.equal(invalidNames.length);
-    });
+    }*/);
 
-    it('should emit conflict on duplicate module names', function * () {
+    it('should emit conflict on duplicate module names'/*, function () {
       var beyo = new BeyoMock();
       var configOptions = {
         path: 'simple-app/app/modules'
@@ -259,10 +261,10 @@ describe('Test Modules Loader', function () {
       modules.should.have.ownProperty('test').be.an.Object;
       modules.test.should.have.ownProperty('name').equal('test');
       modules.test.should.have.ownProperty('description').equal('Beyo simple-app\'s default test module');
-    });
+    }*/);
 
 
-    it('should emit error on missing module dependency', function * () {
+    it('should emit error on missing module dependency'/*, function () {
       var beyo = new BeyoMock();
       var configOptions = {
         path: 'simple-app/app/modules'
@@ -282,9 +284,9 @@ describe('Test Modules Loader', function () {
       yield loader(beyo, configOptions);
 
       errorDetected.should.be.true;
-    });
+    }*/);
 
-    it('should emit error on cyclical module dependencies', function * () {
+    it('should emit error on cyclical module dependencies'/*, function () {
       var beyo = new BeyoMock();
       var configOptions = {
         path: 'simple-app/app/modules'
@@ -304,7 +306,7 @@ describe('Test Modules Loader', function () {
       yield loader(beyo, configOptions);
 
       errorDetected.should.be.true;
-    });
+    }*/);
 
 
   });

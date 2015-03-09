@@ -5,7 +5,7 @@ describe('Test Models Loader', function () {
   var loader = require(__root + '/lib/loaders/models');
   var TestError = require('error-factory')('beyo.testing.TestError');
 
-  it('should fail when no options specified', function * () {
+  it('should fail when no options specified'/*, function () {
     try {
       yield loader();
 
@@ -19,9 +19,9 @@ describe('Test Models Loader', function () {
           .equal('No options specified');
       }
     }
-  });
+  }*/);
 
-  it('should fail with invalid options value', function * () {
+  it('should fail with invalid options value'/*, function () {
     var invalidOptions = [
       null, true, false, 0, 1, '', 'abc', [], /./, function () {}
     ];
@@ -42,9 +42,9 @@ describe('Test Models Loader', function () {
         }
       }
     }
-  });
+  }*/);
 
-  it('should fail with no path specified', function * () {
+  it('should fail with no path specified'/*, function () {
     var beyo = new BeyoMock();
 
     try {
@@ -60,9 +60,9 @@ describe('Test Models Loader', function () {
           .equal('Models path not specified');
       }
     }
-  });
+  }*/);
 
-  it('should fail with invalid path value', function * () {
+  it('should fail with invalid path value'/*, function () {
     var invalidPaths = [
       undefined, null, true, false, void 0, 0, 1, {}, [], /./, function () {}
     ];
@@ -83,9 +83,9 @@ describe('Test Models Loader', function () {
         }
       }
     }
-  });
+  }*/);
 
-  it('should faile with no module name specified', function * () {
+  it('should faile with no module name specified'/*, function () {
     var beyo = new BeyoMock();
 
     try {
@@ -101,9 +101,9 @@ describe('Test Models Loader', function () {
           .equal('Module name not specified');
       }
     }
-  });
+  }*/);
 
-  it('should fail with invalid module name', function * () {
+  it('should fail with invalid module name'/*, function () {
     var invalidPaths = [
       undefined, null, true, false, void 0, 0, 1, {}, [], /./, function () {}
     ];
@@ -124,9 +124,9 @@ describe('Test Models Loader', function () {
         }
       }
     }
-  });
+  }*/);
 
-  it('should fail with no context specified', function * () {
+  it('should fail with no context specified'/*, function () {
     var beyo = new BeyoMock();
 
     try {
@@ -142,9 +142,9 @@ describe('Test Models Loader', function () {
           .equal('Module context not specified');
       }
     }
-  });
+  }*/);
 
-  it('should fail with invalid context', function * () {
+  it('should fail with invalid context'/*, function () {
     var invalidContexts = [
       undefined, null, false, true, void 0, 0, 1, [], /./, function () {}, '', 'abc'
     ];
@@ -165,10 +165,10 @@ describe('Test Models Loader', function () {
         }
       }
     }
-  });
+  }*/);
 
 
-  it('should load models', function * () {
+  it('should load models'/*, function () {
     var beyo = new BeyoMock();
     var context = new ModuleContextMock();
     var options = {
@@ -190,7 +190,7 @@ describe('Test Models Loader', function () {
 
     models.should.not.have.ownProperty('test/Noresult');
 
-  });
+  }*/);
 
 
   describe('Model loader events', function () {
@@ -205,36 +205,38 @@ describe('Test Models Loader', function () {
     var models;
     var eventsFired = {};
 
-    after(function * () {
+    /*
+    after(function () {
       models = yield loader(beyo, options);
 
       Object.keys(eventsFired).should.have.lengthOf(3);
 
       models.should.have.ownProperty('test2/Foo').and.eql({ foo: 'bar' });
     });
+    */
 
-    it('should emit `modelLoad`', function () {
+    it('should emit `modelLoad`'/*, function () {
       beyo.on('modelLoad', function (evt) {
         evt.moduleName.should.equal(options.moduleName);
 
         eventsFired['modelLoad'] = true;
       });
-    });
-    it('should emit `modelLoadError`', function () {
+    }*/);
+    it('should emit `modelLoadError`'/*, function () {
       beyo.on('modelLoadError', function (err, evt) {
         err.should.be.an.Error;
         evt.moduleName.should.equal(options.moduleName);
 
         eventsFired['modelLoadError'] = true;
       });
-    });
-    it('should emit `modelLoadComplete`', function () {
+    }*/);
+    it('should emit `modelLoadComplete`'/*, function () {
       beyo.on('modelLoadComplete', function (evt) {
         evt.moduleName.should.equal(options.moduleName);
 
         eventsFired['modelLoadComplete'] = true;
       });
-    });
+    }*/);
 
   });
 });
