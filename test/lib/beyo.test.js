@@ -17,7 +17,7 @@ describe('Beyo Application Framework', function () {
     process.chdir(testPath);
   });
 
-  this.timeout(3000);
+  this.timeout(1000);
 
   describe('Test loading application', function () {
 
@@ -45,6 +45,8 @@ describe('Beyo Application Framework', function () {
     it('should have loaded app', function (done) {
       testBeyo.init().then(function () {
         testBeyo.app.should.equal('app');
+
+        done();
       }).catch(function (err) {
         done(err);
       });
@@ -99,7 +101,7 @@ describe('Beyo Application Framework', function () {
       });
 
       it('should fetch model even when no module specified', function () {
-        testBeyo.models('test/Foo').should.be.equal(testBeyo.models('Foo'));
+        testBeyo.models('test/foo').should.be.equal(testBeyo.models('foo'));
       });
 
     });
@@ -124,7 +126,7 @@ describe('Beyo Application Framework', function () {
         });
       });
 
-      it('should fetch model even when no module specified', function () {
+      it('should fetch service even when no module specified', function () {
         testBeyo.services('test/index').should.be.equal(testBeyo.services('index'));
       });
 

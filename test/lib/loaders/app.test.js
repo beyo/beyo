@@ -9,37 +9,46 @@ describe('Test Services Loader', function () {
   this.timeout(500);
 
   it('should fail when no options specified', function (done) {
-    loader().then(function (val, err) {
+    try {
+      loader().then(function (app) {
+        done(TestError('Failed'));
+      });
+    } catch (err) {
       err.should.be.an.Error
         .and.have.property('message')
         .equal('No options specified');
 
       done();
-    });
+    }
   });
 
-  it('should fail with invalid options value'/*, function () {
+  it('should fail with invalid options value', function (done) {
+    var testName = this.runnable().fullTitle();
+    var p = [];
     var invalidOptions = [
       null, true, false, 0, 1, '', 'abc', [], /./, function () {}
     ];
+    var invalidCount = 0;
     var beyo = new BeyoMock();
 
     for (var i = 0, iLen = invalidOptions.length; i < iLen; ++i) {
       try {
-        yield loader(beyo, invalidOptions[i]);
-
-        throw TestError(this.runnable().fullTitle());
+        p.push(loader(beyo, invalidOptions[i]));
       } catch (e) {
-        if (e instanceof TestError) {
-          throw e;
-        } else {
-          e.should.be.an.Error
-            .and.have.property('message')
-            .equal('Invalid options value: ' + String(invalidOptions[i]));
-        }
+        e.should.be.an.Error
+          .and.have.property('message')
+          .equal('Invalid options value: ' + String(invalidOptions[i]));
+
+        ++invalidCount;
       }
     }
-  }*/);
+
+    Promise.all(p).then(function () {
+      invalidCount.should.be.equal(invalidOptions.length);
+
+      done();
+    });
+  });
 
   it('should fail with no path specified'/*, function () {
     var beyo = new BeyoMock();

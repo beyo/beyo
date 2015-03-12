@@ -53,38 +53,6 @@ describe('Test resources util', function () {
   });
 
 
-  describe('with constructor name from file', function () {
-
-    it('should validate', function () {
-      resources.getConstructorNameFromFile('./foo/bar/buz.js', 'my-module').should.equal('my-module/foo.bar.Buz');
-      resources.getConstructorNameFromFile('./foo/bar/buz.js').should.equal('foo.bar.Buz');
-    });
-
-    it('should not validate', function () {
-      [
-        undefined, true, false, null, void 0,
-        /./, function () {}, {}, [],
-        -1, 0, 1, '-1', '0', '1',
-        '', '123abc'
-      ].forEach(function (invalidName) {
-        (function () { resources.getConstructorNameFromFile(invalidName); }).should.throw();
-      });
-    });
-
-    it('should not validate wrong module name', function () {
-      [
-        /*undefined,*/ true, false, null, /*void 0,*/
-        /./, function () {}, {}, [],
-        -1, 0, 1, '-1', '0', '1',
-        '', '123abc', '-a', 'a-'
-      ].forEach(function (invalidModuleName) {
-        (function () { resources.getConstructorNameFromFile('a/b/c', invalidModuleName); }).should.throw();
-      });
-    });
-
-  });
-
-
   describe('with name from file', function () {
 
     it('should validate', function () {

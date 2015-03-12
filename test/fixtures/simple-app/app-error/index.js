@@ -1,5 +1,5 @@
 
-module.exports = function * appInit(beyo) {
+module.exports = function appInit(beyo) {
   beyo.__app = beyo.__app || {};
   this.__app = this.__app || {};
 

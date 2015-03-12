@@ -1,6 +1,6 @@
 
 
-module.exports = function * errorService(beyo) {
+module.exports = function errorService(beyo) {
   beyo.__services = beyo.__services || {};
   this.__services = this.__services || {};
 
