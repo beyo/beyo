@@ -1,103 +1,96 @@
 
 
-describe('Test Services Loader', function () {
+describe('Test App Loader', function () {
 
-  var loader = require(__root + '/lib/loaders/app');
   var should = require('should');
+  var loader = require(__root + '/lib/loaders/app');
   var TestError = require('error-factory')('beyo.testing.TestError');
 
-  this.timeout(500);
+  this.timeout(1000);
 
   it('should fail when no options specified', function (done) {
-    try {
-      loader().then(function (app) {
-        done(TestError('Failed'));
-      });
-    } catch (err) {
-      err.should.be.an.Error
-        .and.have.property('message')
-        .equal('No options specified');
-
-      done();
-    }
+    should.allFailAsyncPromise([undefined], function () {
+      return loader();
+    }, function (value) {
+      return 'No options specified';
+    }).then(function (err) {
+      done(err);
+    });
   });
 
   it('should fail with invalid options value', function (done) {
-    var testName = this.runnable().fullTitle();
-    var p = [];
     var invalidOptions = [
       null, true, false, 0, 1, '', 'abc', [], /./, function () {}
     ];
-    var invalidCount = 0;
+
+    should.allFailAsyncPromise(invalidOptions, function (beyo, value) {
+      return loader(beyo, value);
+    }, function (value) {
+      return 'Invalid options value: ' + String(value);
+    }).then(function (err) {
+      done(err);
+    });
+  });
+
+  it('should fail with no path specified', function (done) {
+    var invalidOptions = [
+      {}
+    ];
+
+    should.allFailAsyncPromise(invalidOptions, function (beyo, value) {
+      return loader(beyo, value);
+    }, function () {
+      return 'Application path not specified';
+    }).then(function (err) {
+      done(err);
+    });
+  });
+
+  it('should fail with invalid path value', function (done) {
+    var invalidPaths = [
+      undefined, null, true, false, void 0, 0, 1, {}, [], /./, function () {}
+    ];
+
+    should.allFailAsyncPromise(invalidPaths, function (beyo, value) {
+      return loader(beyo, { path: value });
+    }, function (value) {
+      return 'Invalid path value: ' + String(value);
+    }).then(function (err) {
+      done(err);
+    });
+  });
+
+
+  it('should laod app', function (done) {
     var beyo = new BeyoMock();
+    var options = {
+      path: 'simple-app/app'
+    };
+    var events = {};
 
-    for (var i = 0, iLen = invalidOptions.length; i < iLen; ++i) {
-      try {
-        p.push(loader(beyo, invalidOptions[i]));
-      } catch (e) {
-        e.should.be.an.Error
-          .and.have.property('message')
-          .equal('Invalid options value: ' + String(invalidOptions[i]));
+    ['appLoad', 'appLoadError', 'appLoadComplete'].forEach(function (eventKey) {
+      beyo.on(eventKey, function (evt) {
+        events[eventKey] = true;
+      });
+    });
 
-        ++invalidCount;
-      }
-    }
+    loader(beyo, options).then(function (app) {
+      app.should.equal('app');
 
-    Promise.all(p).then(function () {
-      invalidCount.should.be.equal(invalidOptions.length);
+      events.should.have.ownProperty('appLoad');
+      events.should.have.ownProperty('appLoadComplete');
+      events.should.not.have.ownProperty('appLoadError');
 
       done();
     });
   });
 
-  it('should fail with no path specified'/*, function () {
-    var beyo = new BeyoMock();
 
-    try {
-      yield loader(beyo, {});
-
-      throw TestError(this.runnable().fullTitle());
-    } catch (e) {
-      if (e instanceof TestError) {
-        throw e;
-      } else {
-        e.should.be.an.Error
-          .and.have.property('message')
-          .equal('Application path not specified');
-      }
-    }
-  }*/);
-
-  it('should fail with invalid path value'/*, function () {
-    var invalidPaths = [
-      undefined, null, true, false, void 0, 0, 1, {}, [], /./, function () {}
-    ];
-    var beyo = new BeyoMock();
-
-    for (var i = 0, iLen = invalidPaths.length; i < iLen; ++i) {
-      try {
-        yield loader(beyo, { path: invalidPaths[i]});
-
-        throw TestError(this.runnable().fullTitle());
-      } catch (e) {
-        if (e instanceof TestError) {
-          throw e;
-        } else {
-          e.should.be.an.Error
-            .and.have.property('message')
-            .equal('Invalid path value: ' + String(invalidPaths[i]));
-        }
-      }
-    }
-  }*/);
-
-
-  it('should laod app'/*, function () {
+  it('should ignore missing app init module', function () {
     var beyo = new BeyoMock();
     var options = {
       path: 'simple-app/app'
     };
-    var app;
     var events = {};
 
     ['appLoad', 'appLoadError', 'appLoadComplete'].forEach(function (eventKey) {
@@ -106,45 +99,22 @@ describe('Test Services Loader', function () {
       });
     });
 
-    app = yield loader(beyo, options);
+    loader(beyo, options).then(function (app) {
+      should(app).be.undefined;
 
-    app.should.equal('app');
+      events.should.have.ownProperty('appLoad');
+      events.should.have.ownProperty('appLoadComplete');
+      events.should.not.have.ownProperty('appLoadError');
 
-    events.should.have.ownProperty('appLoad');
-    events.should.have.ownProperty('appLoadComplete');
-    events.should.not.have.ownProperty('appLoadError');
-  }*/);
-
-
-  it('should ignore missing app init module'/*, function () {
-    var beyo = new BeyoMock();
-    var options = {
-      path: 'simple-app/app'
-    };
-    var app;
-    var events = {};
-
-    ['appLoad', 'appLoadError', 'appLoadComplete'].forEach(function (eventKey) {
-      beyo.on(eventKey, function (evt) {
-        events[eventKey] = true;
-      });
+      done();
     });
+  });
 
-    app = yield loader(beyo, options);
-
-    should(app).be.undefined;
-
-    events.should.have.ownProperty('appLoad');
-    events.should.have.ownProperty('appLoadComplete');
-    events.should.not.have.ownProperty('appLoadError');
-  }*/);
-
-  it('should not laod on error'/*, function () {
+  it('should not laod on error', function (done) {
     var beyo = new BeyoMock();
     var options = {
       path: 'simple-app/app-error'
     };
-    var app;
     var events = {};
 
     ['appLoad', 'appLoadError', 'appLoadComplete'].forEach(function (eventKey) {
@@ -153,13 +123,15 @@ describe('Test Services Loader', function () {
       });
     });
 
-    app = yield loader(beyo, options);
+    loader(beyo, options).then(function (app) {
+      throw TestError('Test failed');
+    }).catch(function (err) {
+      events.should.have.ownProperty('appLoad');
+      events.should.not.have.ownProperty('appLoadComplete');
+      events.should.have.ownProperty('appLoadError');
 
-    should(app).be.undefined;
-
-    events.should.have.ownProperty('appLoad');
-    events.should.not.have.ownProperty('appLoadComplete');
-    events.should.have.ownProperty('appLoadError');
-  }*/);
+      done();
+    });
+  });
 
 });

@@ -5,6 +5,8 @@ describe('Test Services Loader', function () {
   var loader = require(__root + '/lib/loaders/services');
   var TestError = require('error-factory')('beyo.testing.TestError');
 
+  this.timeout(1000);
+
   it('should fail when no options specified'/*, function () {
     try {
       yield loader();

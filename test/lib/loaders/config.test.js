@@ -2,135 +2,105 @@
 
 describe('Test Config Loader', function () {
 
+  var should = require('should');
   var loader = require(__root + '/lib/loaders/config');
   var TestError = require('error-factory')('beyo.testing.TestError');
 
-  this.timeout(500);
+  this.timeout(1000);
 
-  it('should fail when no options specified'/*, function * () {
-    try {
-      yield loader();
+  it('should fail when no options specified', function (done) {
+    should.allFailAsyncPromise([undefined], function () {
+      return loader();
+    }, function (value) {
+      return 'No options specified';
+    }).then(function (err) {
+      done(err);
+    });
+  });
 
-      throw TestError(this.runnable().fullTitle());
-    } catch (e) {
-      if (e instanceof TestError) {
-        throw e;
-      } else {
-        e.should.be.an.Error
-          .and.have.property('message')
-          .equal('No options specified');
-      }
-    }
-  }*/);
-
-  it('should fail with invalid options value'/*, function () {
+  it('should fail with invalid options value', function (done) {
     var invalidOptions = [
       null, true, false, 0, 1, '', 'abc', [], /./, function () {}
     ];
-    var beyo = new BeyoMock();
 
-    for (var i = 0, iLen = invalidOptions.length; i < iLen; ++i) {
-      try {
-        yield loader(beyo, invalidOptions[i]);
+    should.allFailAsyncPromise(invalidOptions, function (beyo, value) {
+      return loader(beyo, value);
+    }, function (value) {
+      return 'Invalid options value: ' + String(value);
+    }).then(function (err) {
+      done(err);
+    });
+  });
 
-        throw TestError(this.runnable().fullTitle());
-      } catch (e) {
-        if (e instanceof TestError) {
-          throw e;
-        } else {
-          e.should.be.an.Error
-            .and.have.property('message')
-            .equal('Invalid options value: ' + String(invalidOptions[i]));
-        }
-      }
-    }
-  }*/);
+  it('should fail with no path specified', function (done) {
+    var invalidOptions = [
+      {}
+    ];
 
-  it('should fail with no path specified'/*, function () {
-    var beyo = new BeyoMock();
+    should.allFailAsyncPromise(invalidOptions, function (beyo, value) {
+      return loader(beyo, value);
+    }, function () {
+      return 'Config path not specified';
+    }).then(function (err) {
+      done(err);
+    });
+  });
 
-    try {
-      yield loader(beyo, {});
-
-      throw TestError(this.runnable().fullTitle());
-    } catch (e) {
-      if (e instanceof TestError) {
-        throw e;
-      } else {
-        e.should.be.an.Error
-          .and.have.property('message')
-          .equal('Config path not specified');
-      }
-    }
-  }*/);
-
-  it('should fail with invalid path value'/*, function () {
+  it('should fail with invalid path value', function (done) {
     var invalidPaths = [
-      undefined, null, true, false, 0, 1, {}, [], /./, function () {}
+      undefined, null, true, false, void 0, 0, 1, {}, [], /./, function () {}
     ];
-    var beyo = new BeyoMock();
 
-    for (var i = 0, iLen = invalidPaths.length; i < iLen; ++i) {
-      try {
-        yield loader(beyo, { path: invalidPaths[i]});
+    should.allFailAsyncPromise(invalidPaths, function (beyo, value) {
+      return loader(beyo, { path: value });
+    }, function (value) {
+      return 'Invalid path value: ' + String(value);
+    }).then(function (err) {
+      done(err);
+    });
+  });
 
-        throw TestError(this.runnable().fullTitle());
-      } catch (e) {
-        if (e instanceof TestError) {
-          throw e;
-        } else {
-          e.should.be.an.Error
-            .and.have.property('message')
-            .equal('Invalid path value: ' + String(invalidPaths[i]));
-        }
-      }
-    }
-  }*/);
-
-  it('should fail with invalid module name value'/*, function () {
+  it('should fail with invalid module name value', function () {
     var invalidModuleNames = [
-      undefined, null, true, false, 0, 1, {}, [], /./, function () {}
+      undefined, null, true, false, void 0, 0, 1, {}, [], /./, function () {}
     ];
-    var beyo = new BeyoMock();
 
-    for (var i = 0, iLen = invalidModuleNames.length; i < iLen; ++i) {
-      try {
-        yield loader(beyo, { path: 'foo', moduleName: invalidModuleNames[i]});
+    should.allFailAsyncPromise(invalidModuleNames, function (beyo, value) {
+      return loader(beyo, { path: 'foo', moduleName: value });
+    }, function (value) {
+      return 'Invalid module name: ' + String(value);
+    }).then(function (err) {
+      done(err);
+    });
+  });
 
-        throw TestError(this.runnable().fullTitle());
-      } catch (e) {
-        if (e instanceof TestError) {
-          throw e;
-        } else {
-          e.should.be.an.Error
-            .and.have.property('message')
-            .equal('Invalid module name: ' + String(invalidModuleNames[i]));
-        }
-      }
-    }
-  }*/);
-
-  it('should ignore invalid path'/*, function () {
+  it('should reject invalid path', function (done) {
     var beyo = new BeyoMock();
     var configOptions = {
       path: 'simple-app/app/__INVALID_PATH'
     };
-    var config = yield loader(beyo, configOptions);
 
-    config.should.eql({});
+    loader(beyo, configOptions).then(function (config) {
+      done(TestError("Failed"));
+    }).catch(function (err) {
+      err.should.be.instanceof.Error;
 
-  }*/);
+      done();
+    });
+  });
 
-  it('should sanitize keys with dots'/*, function () {
+  it('should sanitize keys with dots', function (done) {
     var beyo = new BeyoMock();
     var configOptions = {
       path: 'simple-app/app/conf'
     };
-    var config = yield loader(beyo, configOptions);
 
-    config.should.have.ownProperty('config.with.dot').and.have.ownProperty('dot.test').be.true;
+    loader(beyo, configOptions).then(function (config) {
+      config.should.have.ownProperty('config.with.dot').and.have.ownProperty('dot.test').be.true;
 
-  }*/);
+      done();
+    });
+  });
 
   describe('Config loader events', function () {
 
@@ -143,46 +113,46 @@ describe('Test Config Loader', function () {
     var config;
     var eventsFired = {};
 
-    /*
-    after(function () {
-      config = yield loader(beyo, configOptions);
+    after(function (done) {
+      loader(beyo, configOptions).then(function (config) {
+        Object.keys(eventsFired).should.have.lengthOf(4);
 
-      Object.keys(eventsFired).should.have.lengthOf(4);
+        config.conflictKey.should.equal('original');
 
-      config.conflictKey.should.equal('original');
+        done();
+      });
     });
-    */
 
-    it('should emit `configLoad`'/*, function () {
+    it('should emit `configLoad`', function () {
       beyo.on('configLoad', function (evt) {
         evt.moduleName.should.equal(moduleName);
 
         eventsFired['configLoad'] = true;
       });
-    }*/);
-    it('should emit `configLoadConflict`'/*, function () {
+    });
+    it('should emit `configLoadConflict`', function () {
       beyo.on('configLoadConflict', function (key, src, dest, evt) {
         key.should.equal('conflictKey');
         evt.moduleName.should.equal(moduleName);
 
         eventsFired['configLoadConflict'] = true;
       });
-    }*/);
-    it('should emit `configLoadError`'/*, function () {
+    });
+    it('should emit `configLoadError`', function () {
       beyo.on('configLoadError', function (err, evt) {
         err.should.be.an.Error;
         evt.moduleName.should.equal(moduleName);
 
         eventsFired['configLoadError'] = true;
       });
-    }*/);
-    it('should emit `configLoadComplete`'/*, function () {
+    });
+    it('should emit `configLoadComplete`', function () {
       beyo.on('configLoadComplete', function (evt) {
         evt.moduleName.should.equal(moduleName);
 
         eventsFired['configLoadComplete'] = true;
       });
-    }*/);
+    });
 
   });
 
@@ -197,16 +167,18 @@ describe('Test Config Loader', function () {
 
     beyo.env = undefined;
 
-    it('should merge two objects'/*, function () {
-      config = yield loader(beyo, configOptions);
+    it('should merge two objects', function (done) {
+      loader(beyo, configOptions).then(function (config) {
+        config.should.have.ownProperty('mergeKey');
+        config.mergeKey.should.have.ownProperty('foo').equal(123);
+        config.mergeKey.should.have.ownProperty('bar').equal(456);
 
-      config.should.have.ownProperty('mergeKey');
-      config.mergeKey.should.have.ownProperty('foo').equal(123);
-      config.mergeKey.should.have.ownProperty('bar').equal(456);
+        // NOTE : configuration is loaded alphabetically, therefore, index.json comes before merge.json
+        config.mergeKey.should.have.ownProperty('override').equal('merged');
 
-      // NOTE : configuration is loaded alphabetically, therefore, index.json comes before merge.json
-      config.mergeKey.should.have.ownProperty('override').equal('merged');
-    }*/);
+        done();
+      });
+    });
 
   });
 
@@ -219,88 +191,101 @@ describe('Test Config Loader', function () {
     };
     var config;
 
-    it('should load partial env config (test)'/*, function () {
+    it('should load partial env config (test)', function (done) {
       beyo.env = 'test';
-      config = yield loader(beyo, configOptions);
 
-      config.should.not.have.ownProperty('env-dev');
+      loader(beyo, configOptions).then(function (config) {
+        config.should.not.have.ownProperty('env-dev');
 
-      config['env-test'].t.should.be.true;
-      config['env-test'].te.should.be.true;
-      config['env-test'].tes.should.be.true;
-      config['env-test'].test.should.be.true;
-      config['env-test'].testing.should.be.true;
+        config['env-test'].t.should.be.true;
+        config['env-test'].te.should.be.true;
+        config['env-test'].tes.should.be.true;
+        config['env-test'].test.should.be.true;
+        config['env-test'].testing.should.be.true;
 
-      config['env-test']['a']['b']['c'].t.should.be.true;
-      config['env-test']['a']['b']['c'].te.should.be.true;
-      config['env-test']['a']['b']['c'].tes.should.be.true;
-      config['env-test']['a']['b']['c'].test.should.be.true;
-      config['env-test']['a']['b']['c'].testing.should.be.true;
-    }*/);
+        config['env-test']['a']['b']['c'].t.should.be.true;
+        config['env-test']['a']['b']['c'].te.should.be.true;
+        config['env-test']['a']['b']['c'].tes.should.be.true;
+        config['env-test']['a']['b']['c'].test.should.be.true;
+        config['env-test']['a']['b']['c'].testing.should.be.true;
 
-    it('should load full env config (development)'/*, function () {
+        done();
+      });
+    });
+
+    it('should load full env config (development)', function (done) {
       beyo.env = 'development';
-      config = yield loader(beyo, configOptions);
+      loader(beyo, configOptions).then(function (config) {
+        config.should.not.have.ownProperty('env-test');
 
-      config.should.not.have.ownProperty('env-test');
+        config['env-dev'].d.should.be.true;
+        config['env-dev'].de.should.be.true;
+        config['env-dev'].dev.should.be.true;
+        config['env-dev'].devel.should.be.true;
+        config['env-dev'].development.should.be.true;
 
-      config['env-dev'].d.should.be.true;
-      config['env-dev'].de.should.be.true;
-      config['env-dev'].dev.should.be.true;
-      config['env-dev'].devel.should.be.true;
-      config['env-dev'].development.should.be.true;
-    }*/);
+        done();
+      });
+    });
 
-    it('should load config providing multiple env'/*, function () {
+    it('should load config providing multiple env', function (done) {
       // A
       beyo.env = 'a';
-      config = yield loader(beyo, configOptions);
+      loader(beyo, configOptions).then(function (config) {
+        config.should.not.have.ownProperty('env-test');
+        config.should.not.have.ownProperty('env-dev');
 
-      config.should.not.have.ownProperty('env-test');
-      config.should.not.have.ownProperty('env-dev');
+        config['env-ab'].a.should.be.true;
+        config['env-ab'].ab.should.be.true;
+        config['env-ab'].ba.should.be.true;
+        config['env-ab'].should.not.have.ownProperty('b');
 
-      config['env-ab'].a.should.be.true;
-      config['env-ab'].ab.should.be.true;
-      config['env-ab'].ba.should.be.true;
-      config['env-ab'].should.not.have.ownProperty('b');
+        // B
+        beyo.env = 'b';
+        return loader(beyo, configOptions);
+      }).then(function (config) {
+        config.should.not.have.ownProperty('env-test');
+        config.should.not.have.ownProperty('env-dev');
 
-      // B
-      beyo.env = 'b';
-      config = yield loader(beyo, configOptions);
+        config['env-ab'].b.should.be.true;
+        config['env-ab'].ab.should.be.true;
+        config['env-ab'].ba.should.be.true;
+        config['env-ab'].should.not.have.ownProperty('a');
 
-      config.should.not.have.ownProperty('env-test');
-      config.should.not.have.ownProperty('env-dev');
+        done();
+      });
+    });
 
-      config['env-ab'].b.should.be.true;
-      config['env-ab'].ab.should.be.true;
-      config['env-ab'].ba.should.be.true;
-      config['env-ab'].should.not.have.ownProperty('a');
-
-    }*/);
-
-    it('should not load unspecified config (prod)'/*, function () {
+    it('should not load unspecified config (prod)', function (done) {
       beyo.env = 'prod';
-      config = yield loader(beyo, configOptions);
+      loader(beyo, configOptions).then(function (config) {
+        config.should.not.have.ownProperty('env-test');
+        config.should.not.have.ownProperty('env-dev');
 
-      config.should.not.have.ownProperty('env-test');
-      config.should.not.have.ownProperty('env-dev');
-    }*/);
+        done();
+      });
+    });
 
-    it('should not load wrong env config (est)'/*, function () {
+    it('should not load wrong env config (est)', function (done) {
       beyo.env = 'est';
-      config = yield loader(beyo, configOptions);
+      loader(beyo, configOptions).then(function (config) {
+        config.should.not.have.ownProperty('env-test');
+        config.should.not.have.ownProperty('env-dev');
 
-      config.should.not.have.ownProperty('env-test');
-      config.should.not.have.ownProperty('env-dev');
-    }*/);
+        done();
+      });
+    });
 
-    it('should load even if no env specified'/*, function () {
+    it('should load even if no env specified', function (done) {
       beyo.env = undefined;
-      config = yield loader(beyo, configOptions);
+      loader(beyo, configOptions).then(function (config) {
 
-      config.should.not.have.ownProperty('env-test');
-      config.should.not.have.ownProperty('env-dev');
-    }*/);
+        config.should.not.have.ownProperty('env-test');
+        config.should.not.have.ownProperty('env-dev');
+
+        done();
+      });
+    });
 
   });
 

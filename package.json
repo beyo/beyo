@@ -21,8 +21,8 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "test-cov": "istanbul cover mocha",
-    "test-travis": "istanbul cover mocha --report lcovonly"
+    "test-cov": "istanbul cover _mocha",
+    "test-travis": "istanbul cover _mocha --report lcovonly"
   },
   "repository": {
     "type": "git",

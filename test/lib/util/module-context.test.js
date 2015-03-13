@@ -2,9 +2,8 @@
 
 describe('Test Module Context', function () {
 
-  var moduleContext = require('../../../lib/util/module-context');
   var should = require('should');
-
+  var moduleContext = require('../../../lib/util/module-context');
 
   it('should fail with no specified module', function () {
     (function () { moduleContext(); }).should.throw('No module specified');

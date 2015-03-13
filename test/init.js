@@ -1,5 +1,8 @@
 
 var path = require('path');
+var should = require('should');
+
+var TestError = require('error-factory')('beyo.testing.TestError');
 
 // setting globals
 GLOBAL.assert = global.assert = require('assert');
@@ -34,3 +37,34 @@ require('util').inherits(BeyoMock, require('events').EventEmitter);
 GLOBAL.ModuleContextMock = global.ModuleContextMock = function ModuleContext() {
 
 };
+
+GLOBAL.should = global.should = should;
+
+should.allFailAsyncPromise = function allFailAsyncPromise(testValues, cb, errcb) {
+  var p = [];
+  var beyo = cb.length ? new BeyoMock() : undefined;
+  var errCount = 0;
+  var count = testValues.length;
+
+  for (var i = 0; i < count; ++i) (function (testValue) {
+    try {
+      p.push(cb(beyo, testValue).then(function () {
+        return JSON.stringify(testValue);
+      }));
+    } catch (e) {
+      e.should.be.an.Error
+        .and.have.property('message')
+        .equal(errcb(testValue));
+
+      ++errCount;
+    }
+  })(testValues[i]);
+
+  return Promise.all(p).then(function (errors) {
+    errors = errors.filter(function (err) {
+      return !!err;
+    });
+
+    return errors.length ? TestError("Failed with values: " + errors.join(', ')) : undefined;
+  });
+}

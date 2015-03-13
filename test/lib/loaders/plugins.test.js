@@ -5,6 +5,8 @@ describe('Test Plugins Loader', function () {
   var loader = require(__root + '/lib/loaders/plugins');
   var TestError = require('error-factory')('beyo.testing.TestError');
 
+  this.timeout(1000);
+
   it('should fail when no options specified'/*, function () {
     try {
       yield loader();
