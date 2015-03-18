@@ -65,6 +65,8 @@ should.allFailAsyncPromise = function allFailAsyncPromise(testValues, cb, errcb)
       return !!err;
     });
 
+    errCount.should.be.equal(testValues.length);
+
     return errors.length ? TestError("Failed with values: " + errors.join(', ')) : undefined;
   });
 }
