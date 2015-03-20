@@ -42,11 +42,12 @@ GLOBAL.should = global.should = should;
 
 should.allFailAsyncPromise = function allFailAsyncPromise(testValues, cb, errcb) {
   var p = [];
-  var beyo = cb.length ? new BeyoMock() : undefined;
   var errCount = 0;
   var count = testValues.length;
 
   for (var i = 0; i < count; ++i) (function (testValue) {
+    var beyo = cb.length ? new BeyoMock() : undefined;
+
     try {
       p.push(cb(beyo, testValue).then(function () {
         return JSON.stringify(testValue);

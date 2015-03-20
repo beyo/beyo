@@ -99,6 +99,8 @@ describe('Test Config Loader', function () {
       config.should.have.ownProperty('config.with.dot').and.have.ownProperty('dot.test').be.true;
 
       done();
+    }).catch(function (err) {
+      done(err);
     });
   });
 
@@ -120,6 +122,8 @@ describe('Test Config Loader', function () {
         config.conflictKey.should.equal('original');
 
         done();
+      }).catch(function (err) {
+        done(err);
       });
     });
 
@@ -131,16 +135,16 @@ describe('Test Config Loader', function () {
       });
     });
     it('should emit `configLoadConflict`', function () {
-      beyo.on('configLoadConflict', function (key, src, dest, evt) {
-        key.should.equal('conflictKey');
+      beyo.on('configLoadConflict', function (evt, conflictData) {
+        conflictData.currentKeyPath.should.equal('conflictKey');
         evt.moduleName.should.equal(moduleName);
 
         eventsFired['configLoadConflict'] = true;
       });
     });
     it('should emit `configLoadError`', function () {
-      beyo.on('configLoadError', function (err, evt) {
-        err.should.be.an.Error;
+      beyo.on('configLoadError', function (evt) {
+        evt.error.should.be.an.Error;
         evt.moduleName.should.equal(moduleName);
 
         eventsFired['configLoadError'] = true;
@@ -177,6 +181,8 @@ describe('Test Config Loader', function () {
         config.mergeKey.should.have.ownProperty('override').equal('merged');
 
         done();
+      }).catch(function (err) {
+        done(err);
       });
     });
 
@@ -210,6 +216,8 @@ describe('Test Config Loader', function () {
         config['env-test']['a']['b']['c'].testing.should.be.true;
 
         done();
+      }).catch(function (err) {
+        done(err);
       });
     });
 
@@ -225,6 +233,8 @@ describe('Test Config Loader', function () {
         config['env-dev'].development.should.be.true;
 
         done();
+      }).catch(function (err) {
+        done(err);
       });
     });
 
@@ -253,6 +263,8 @@ describe('Test Config Loader', function () {
         config['env-ab'].should.not.have.ownProperty('a');
 
         done();
+      }).catch(function (err) {
+        done(err);
       });
     });
 
@@ -263,6 +275,8 @@ describe('Test Config Loader', function () {
         config.should.not.have.ownProperty('env-dev');
 
         done();
+      }).catch(function (err) {
+        done(err);
       });
     });
 
@@ -273,6 +287,8 @@ describe('Test Config Loader', function () {
         config.should.not.have.ownProperty('env-dev');
 
         done();
+      }).catch(function (err) {
+        done(err);
       });
     });
 
@@ -284,6 +300,8 @@ describe('Test Config Loader', function () {
         config.should.not.have.ownProperty('env-dev');
 
         done();
+      }).catch(function (err) {
+        done(err);
       });
     });
 

@@ -2,175 +2,113 @@
 
 describe('Test Services Loader', function () {
 
+  var should = require('should');
   var loader = require(__root + '/lib/loaders/services');
   var TestError = require('error-factory')('beyo.testing.TestError');
 
   this.timeout(1000);
 
-  it('should fail when no options specified'/*, function () {
-    try {
-      yield loader();
+  it('should fail when no options specified', function (done) {
+    should.allFailAsyncPromise([undefined], function () {
+      return loader();
+    }, function (value) {
+      return 'No options specified';
+    }).then(function (err) {
+      done(err);
+    });
+  });
 
-      throw TestError(this.runnable().fullTitle());
-    } catch (e) {
-      if (e instanceof TestError) {
-        throw e;
-      } else {
-        e.should.be.an.Error
-          .and.have.property('message')
-          .equal('No options specified');
-      }
-    }
-  }*/);
-
-  it('should fail with invalid options value'/*, function () {
+  it('should fail with invalid options value', function (done) {
     var invalidOptions = [
       null, true, false, 0, 1, '', 'abc', [], /./, function () {}
     ];
-    var beyo = new BeyoMock();
 
-    for (var i = 0, iLen = invalidOptions.length; i < iLen; ++i) {
-      try {
-        yield loader(beyo, invalidOptions[i]);
+    should.allFailAsyncPromise(invalidOptions, function (beyo, value) {
+      return loader(beyo, value);
+    }, function (value) {
+      return 'Invalid options value: ' + String(value);
+    }).then(function (err) {
+      done(err);
+    });
+  });
 
-        throw TestError(this.runnable().fullTitle());
-      } catch (e) {
-        if (e instanceof TestError) {
-          throw e;
-        } else {
-          e.should.be.an.Error
-            .and.have.property('message')
-            .equal('Invalid options value: ' + String(invalidOptions[i]));
-        }
-      }
-    }
-  }*/);
+  it('should fail with no path specified', function (done) {
+    var invalidOptions = [
+      {}
+    ];
 
-  it('should fail with no path specified'/*, function () {
-    var beyo = new BeyoMock();
+    should.allFailAsyncPromise(invalidOptions, function (beyo, value) {
+      return loader(beyo, value);
+    }, function () {
+      return 'Services path not specified';
+    }).then(function (err) {
+      done(err);
+    });
+  });
 
-    try {
-      yield loader(beyo, {});
-
-      throw TestError(this.runnable().fullTitle());
-    } catch (e) {
-      if (e instanceof TestError) {
-        throw e;
-      } else {
-        e.should.be.an.Error
-          .and.have.property('message')
-          .equal('Controllers path not specified');
-      }
-    }
-  }*/);
-
-  it('should fail with invalid path value'/*, function () {
+  it('should fail with invalid path value', function (done) {
     var invalidPaths = [
       undefined, null, true, false, void 0, 0, 1, {}, [], /./, function () {}
     ];
-    var beyo = new BeyoMock();
 
-    for (var i = 0, iLen = invalidPaths.length; i < iLen; ++i) {
-      try {
-        yield loader(beyo, { path: invalidPaths[i]});
+    should.allFailAsyncPromise(invalidPaths, function (beyo, value) {
+      return loader(beyo, { path: value });
+    }, function (value) {
+      return 'Invalid path value: ' + String(value);
+    }).then(function (err) {
+      done(err);
+    });
+  });
 
-        throw TestError(this.runnable().fullTitle());
-      } catch (e) {
-        if (e instanceof TestError) {
-          throw e;
-        } else {
-          e.should.be.an.Error
-            .and.have.property('message')
-            .equal('Invalid path value: ' + String(invalidPaths[i]));
-        }
-      }
-    }
-  }*/);
+  it('should fail with no module name specified', function (done) {
+    should.allFailAsyncPromise([undefined], function (beyo, value) {
+      return loader(beyo, { path: 'foo' });
+    }, function () {
+      return 'Module name not specified';
+    }).then(function (err) {
+      done(err);
+    });
+  });
 
-  it('should faile with no module name specified'/*, function () {
-    var beyo = new BeyoMock();
-
-    try {
-      yield loader(beyo, { path: 'foo' });
-
-      throw TestError(this.runnable().fullTitle());
-    } catch (e) {
-      if (e instanceof TestError) {
-        throw e;
-      } else {
-        e.should.be.an.Error
-          .and.have.property('message')
-          .equal('Module name not specified');
-      }
-    }
-  }*/);
-
-  it('should fail with invalid module name'/*, function () {
-    var invalidPaths = [
+  it('should fail with invalid module name', function (done) {
+    var invalidModuleNames = [
       undefined, null, true, false, void 0, 0, 1, {}, [], /./, function () {}
     ];
-    var beyo = new BeyoMock();
 
-    for (var i = 0, iLen = invalidPaths.length; i < iLen; ++i) {
-      try {
-        yield loader(beyo, { path: 'foo', moduleName: invalidPaths[i]});
+    should.allFailAsyncPromise(invalidModuleNames, function (beyo, invalidModuleName) {
+      return loader(beyo, { path: 'foo', moduleName: invalidModuleName });
+    }, function (invalidModuleName) {
+      return 'Invalid module name: ' + String(invalidModuleName);
+    }).then(function (err) {
+      done(err);
+    });
+  });
 
-        throw TestError(this.runnable().fullTitle());
-      } catch (e) {
-        if (e instanceof TestError) {
-          throw e;
-        } else {
-          e.should.be.an.Error
-            .and.have.property('message')
-            .equal('Invalid module name: ' + String(invalidPaths[i]));
-        }
-      }
-    }
-  }*/);
+  it('should fail with no context specified', function (done) {
+    should.allFailAsyncPromise([undefined], function (beyo, value) {
+      return loader(beyo, { path: 'foo', moduleName: 'bar' });
+    }, function () {
+      return 'Module context not specified';
+    }).then(function (err) {
+      done(err);
+    });
+  });
 
-  it('should fail with no context specified'/*, function () {
-    var beyo = new BeyoMock();
-
-    try {
-      yield loader(beyo, { path: 'foo', moduleName: 'bar' });
-
-      throw TestError(this.runnable().fullTitle());
-    } catch (e) {
-      if (e instanceof TestError) {
-        throw e;
-      } else {
-        e.should.be.an.Error
-          .and.have.property('message')
-          .equal('Module context not specified');
-      }
-    }
-  }*/);
-
-  it('should fail with invalid context'/*, function () {
+  it('should fail with invalid context', function (done) {
     var invalidContexts = [
       undefined, null, false, true, void 0, 0, 1, [], /./, function () {}, '', 'abc'
     ];
-    var beyo = new BeyoMock();
 
-    for (var i = 0, iLen = invalidContexts.length; i < iLen; ++i) {
-      try {
-        yield loader(beyo, { path: 'foo', moduleName: 'bar', context: invalidContexts[i] });
+    should.allFailAsyncPromise(invalidContexts, function (beyo, invalidContext) {
+      return loader(beyo, { path: 'foo', moduleName: 'bar', context: invalidContext });
+    }, function (invalidContext) {
+      return 'Invalid module context: ' + String(invalidContext);
+    }).then(function (err) {
+      done(err);
+    });
+  });
 
-        throw TestError(this.runnable().fullTitle());
-      } catch (e) {
-        if (e instanceof TestError) {
-          throw e;
-        } else {
-          e.should.be.an.Error
-            .and.have.property('message')
-            .equal('Invalid module context: ' + String(invalidContexts[i]));
-        }
-      }
-    }
-  }*/);
-
-
-  it('should load services'/*, function () {
+  it('should load services', function (done) {
     var beyo = new BeyoMock();
     var context = new ModuleContextMock();
     var options = {
@@ -178,22 +116,27 @@ describe('Test Services Loader', function () {
       moduleName: 'test',
       context: context
     };
-    var services = yield loader(beyo, options);
 
-    beyo.should.have.ownProperty('__services');
-    beyo.__services.should.have.ownProperty('error').and.be.true;
-    beyo.__services.should.have.ownProperty('index').and.be.true;
-    beyo.__services.should.have.ownProperty('noreturn').and.be.true;
+    loader(beyo, options).then(function (services) {
+      beyo.should.have.ownProperty('__services');
+      beyo.__services.should.have.ownProperty('error').and.be.true;
+      beyo.__services.should.have.ownProperty('index').and.be.true;
+      beyo.__services.should.have.ownProperty('noreturn').and.be.true;
 
-    context.should.have.ownProperty('__services');
-    context.__services.should.not.have.ownProperty('error');
-    context.__services.should.have.ownProperty('index').and.be.true;
-    context.__services.should.have.ownProperty('noreturn');
+      context.should.have.ownProperty('__services');
+      context.__services.should.not.have.ownProperty('error');
+      context.__services.should.have.ownProperty('index').and.be.true;
+      context.__services.should.have.ownProperty('noreturn');
 
-    services.should.not.have.ownProperty('test/error');
-    services.should.have.ownProperty('test/index').and.equal('index');
-    services.should.not.have.ownProperty('test/noreturn');
-  }*/);
+      services.should.not.have.ownProperty('test/error');
+      services.should.have.ownProperty('test/index').and.equal('index');
+      services.should.not.have.ownProperty('test/noreturn');
+
+      done();
+    }).catch(function (err) {
+      done(err);
+    });
+  });
 
 
   describe('Services loader events', function () {
@@ -208,38 +151,40 @@ describe('Test Services Loader', function () {
     var services;
     var eventsFired = {};
 
-    /*
-    after(function () {
-      services = yield loader(beyo, options);
+    after(function (done) {
+      loader(beyo, options).then(function (services) {
+        Object.keys(eventsFired).should.have.lengthOf(3);
 
-      Object.keys(eventsFired).should.have.lengthOf(3);
+        services.should.have.ownProperty('test/index').and.equal('index');
 
-      services.should.have.ownProperty('test/index').and.equal('index');
+        done();
+      }).catch(function (err) {
+        done(err);
+      });
     });
-    */
 
-    it('should emit `serviceLoad`'/*, function () {
+    it('should emit `serviceLoad`', function () {
       beyo.on('serviceLoad', function (evt) {
         evt.moduleName.should.equal(options.moduleName);
 
         eventsFired['serviceLoad'] = true;
       });
-    }*/);
-    it('should emit `serviceLoadError`'/*, function () {
-      beyo.on('serviceLoadError', function (err, evt) {
+    });
+    it('should emit `serviceLoadError`', function () {
+      beyo.on('serviceLoadError', function (err) {
         err.should.be.an.Error;
-        evt.moduleName.should.equal(options.moduleName);
+        //err.eventData.moduleName.should.equal(options.moduleName);
 
         eventsFired['serviceLoadError'] = true;
       });
-    }*/);
-    it('should emit `serviceLoadComplete`'/*, function () {
+    });
+    it('should emit `serviceLoadComplete`', function () {
       beyo.on('serviceLoadComplete', function (evt) {
         evt.moduleName.should.equal(options.moduleName);
 
         eventsFired['serviceLoadComplete'] = true;
       });
-    }*/);
+    });
 
   });
 });
