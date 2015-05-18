@@ -136,9 +136,9 @@ describe('Test Modules Loader', function () {
         eventsFired['moduleLoadError'] = true;
       });
     });
-    it('should emit `moduleLoadComplete`', function () {
-      beyo.on('moduleLoadComplete', function (evt) {
-        eventsFired['moduleLoadComplete'] = true;
+    it('should emit `moduleLoaded`', function () {
+      beyo.on('moduleLoaded', function (evt) {
+        eventsFired['moduleLoaded'] = true;
       });
     });
 

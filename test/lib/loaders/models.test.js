@@ -170,19 +170,18 @@ describe('Test Models Loader', function () {
       });
     });
     it('should emit `modelLoadError`', function () {
-      beyo.on('modelLoadError', function (err) {
-        err.should.be.an.Error;
-        err.should.have.property('eventData')
-        err.eventData.should.have.property('moduleName').equal(options.moduleName);
+      beyo.on('modelLoadError', function (evt) {
+        evt.error.should.be.an.Error;
+        evt.should.have.property('moduleName').equal(options.moduleName);
 
         eventsFired['modelLoadError'] = true;
       });
     });
-    it('should emit `modelLoadComplete`', function () {
-      beyo.on('modelLoadComplete', function (evt) {
+    it('should emit `modelLoaded`', function () {
+      beyo.on('modelLoaded', function (evt) {
         evt.moduleName.should.equal(options.moduleName);
 
-        eventsFired['modelLoadComplete'] = true;
+        eventsFired['modelLoaded'] = true;
       });
     });
 

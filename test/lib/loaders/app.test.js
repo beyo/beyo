@@ -68,7 +68,7 @@ describe('Test App Loader', function () {
     };
     var events = {};
 
-    ['appLoad', 'appLoadError', 'appLoadComplete'].forEach(function (eventKey) {
+    ['appLoad', 'appLoadError', 'appLoaded'].forEach(function (eventKey) {
       beyo.on(eventKey, function (evt) {
         events[eventKey] = true;
       });
@@ -78,7 +78,7 @@ describe('Test App Loader', function () {
       app.should.equal('app');
 
       events.should.have.ownProperty('appLoad');
-      events.should.have.ownProperty('appLoadComplete');
+      events.should.have.ownProperty('appLoaded');
       events.should.not.have.ownProperty('appLoadError');
 
       done();
@@ -93,7 +93,7 @@ describe('Test App Loader', function () {
     };
     var events = {};
 
-    ['appLoad', 'appLoadError', 'appLoadComplete'].forEach(function (eventKey) {
+    ['appLoad', 'appLoadError', 'appLoaded'].forEach(function (eventKey) {
       beyo.on(eventKey, function (evt) {
         events[eventKey] = true;
       });
@@ -103,7 +103,7 @@ describe('Test App Loader', function () {
       should(app).be.undefined;
 
       events.should.have.ownProperty('appLoad');
-      events.should.have.ownProperty('appLoadComplete');
+      events.should.have.ownProperty('appLoaded');
       events.should.not.have.ownProperty('appLoadError');
 
       done();
@@ -117,7 +117,7 @@ describe('Test App Loader', function () {
     };
     var events = {};
 
-    ['appLoad', 'appLoadError', 'appLoadComplete'].forEach(function (eventKey) {
+    ['appLoad', 'appLoadError', 'appLoaded'].forEach(function (eventKey) {
       beyo.on(eventKey, function (evt) {
         events[eventKey] = true;
       });
@@ -127,7 +127,7 @@ describe('Test App Loader', function () {
       throw TestError('Test failed');
     }).catch(function (err) {
       events.should.have.ownProperty('appLoad');
-      events.should.not.have.ownProperty('appLoadComplete');
+      events.should.not.have.ownProperty('appLoaded');
       events.should.have.ownProperty('appLoadError');
 
       done();

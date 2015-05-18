@@ -171,18 +171,18 @@ describe('Test Services Loader', function () {
       });
     });
     it('should emit `serviceLoadError`', function () {
-      beyo.on('serviceLoadError', function (err) {
-        err.should.be.an.Error;
-        //err.eventData.moduleName.should.equal(options.moduleName);
+      beyo.on('serviceLoadError', function (evt) {
+        evt.error.should.be.an.Error;
+        evt.moduleName.should.equal(options.moduleName);
 
         eventsFired['serviceLoadError'] = true;
       });
     });
-    it('should emit `serviceLoadComplete`', function () {
-      beyo.on('serviceLoadComplete', function (evt) {
+    it('should emit `serviceLoaded`', function () {
+      beyo.on('serviceLoaded', function (evt) {
         evt.moduleName.should.equal(options.moduleName);
 
-        eventsFired['serviceLoadComplete'] = true;
+        eventsFired['serviceLoaded'] = true;
       });
     });
 

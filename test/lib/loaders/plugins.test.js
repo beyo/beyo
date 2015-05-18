@@ -316,9 +316,9 @@ describe('Test Plugins Loader', function () {
         eventsFired['pluginLoadError'] = true;
       });
     });
-    it('should emit `pluginLoadComplete`', function () {
-      beyo.on('pluginLoadComplete', function (evt) {
-        eventsFired['pluginLoadComplete'] = true;
+    it('should emit `pluginLoaded`', function () {
+      beyo.on('pluginLoaded', function (evt) {
+        eventsFired['pluginLoaded'] = true;
       });
     });
 

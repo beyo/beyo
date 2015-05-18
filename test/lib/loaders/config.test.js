@@ -150,11 +150,11 @@ describe('Test Config Loader', function () {
         eventsFired['configLoadError'] = true;
       });
     });
-    it('should emit `configLoadComplete`', function () {
-      beyo.on('configLoadComplete', function (evt) {
+    it('should emit `configLoaded`', function () {
+      beyo.on('configLoaded', function (evt) {
         evt.moduleName.should.equal(moduleName);
 
-        eventsFired['configLoadComplete'] = true;
+        eventsFired['configLoaded'] = true;
       });
     });
 

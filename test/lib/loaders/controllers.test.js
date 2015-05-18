@@ -165,18 +165,18 @@ describe('Test Controllers Loader', function () {
       });
     });
     it('should emit `controllerLoadError`', function () {
-      beyo.on('controllerLoadError', function (err, evt) {
-        err.should.be.an.Error;
+      beyo.on('controllerLoadError', function (evt) {
+        evt.error.should.be.an.Error;
         evt.moduleName.should.equal(options.moduleName);
 
         eventsFired['controllerLoadError'] = true;
       });
     });
-    it('should emit `controllerLoadComplete`', function () {
-      beyo.on('controllerLoadComplete', function (evt) {
+    it('should emit `controllerLoaded`', function () {
+      beyo.on('controllerLoaded', function (evt) {
         evt.moduleName.should.equal(options.moduleName);
 
-        eventsFired['controllerLoadComplete'] = true;
+        eventsFired['controllerLoaded'] = true;
       });
     });
 

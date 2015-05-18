@@ -220,17 +220,17 @@ describe('Test Logger Loader', function () {
       });
     });
     it('should emit `loggerLoadError`', function () {
-      beyo.on('loggerLoadError', function (err, evt) {
-        err.should.be.an.Error;
+      beyo.on('loggerLoadError', function (evt) {
+        evt.error.should.be.an.Error;
 
         eventsFired['loggerLoadError'] = true;
       });
     });
-    it('should emit `loggerLoadComplete`', function () {
-      beyo.on('loggerLoadComplete', function (evt) {
+    it('should emit `loggerLoaded`', function () {
+      beyo.on('loggerLoaded', function (evt) {
         evt.logger.should.exist;
 
-        eventsFired['loggerLoadComplete'] = true;
+        eventsFired['loggerLoaded'] = true;
       });
     });
 
