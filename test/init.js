@@ -53,7 +53,7 @@ should.allFailAsyncPromise = function allFailAsyncPromise(testValues, cb, errcb)
         return JSON.stringify(testValue);
       }));
     } catch (e) {
-      e.should.be.an.Error
+      e.should.be.instanceOf(Error)
         .and.have.property('message')
         .equal(errcb(testValue));
 

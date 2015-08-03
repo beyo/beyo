@@ -117,7 +117,7 @@ describe('Test Plugins Loader', function () {
 
     should.allFailAsyncPromise(invalidPluginAliasses, function (beyo, invalidPluginAlias) {
       beyo.once('pluginLoadError', function (evt) {
-        evt.should.have.property('error').be.an.Error.and.have.ownProperty('message').startWith('Plugin map value must be a non-empty string');
+        evt.should.have.property('error').be.instanceOf(Error).and.have.ownProperty('message').startWith('Plugin map value must be a non-empty string');
       });
 
       return loader(beyo, {
@@ -169,14 +169,20 @@ describe('Test Plugins Loader', function () {
     var pluginsOptions = {
       path: 'some-invalid-path'
     };
+    var eventFired = false;
+
+    beyo.on('pluginsNotFound', function (evt) {
+      evt.path.should.endWith(pluginsOptions.path);
+
+      eventFired = true;
+    });
 
     loader(beyo, pluginsOptions).then(function (plugins) {
-      done(TestError('Failed'));
-    }).catch(function (err) {
-      err.should.be.an.Error;
-      err.message.should.equal('Invalid plugins path');
+      eventFired.should.be.true;
 
       done();
+    }).catch(function (err) {
+      done(err);
     });
 
   });
@@ -195,7 +201,7 @@ describe('Test Plugins Loader', function () {
       var hasError = false;
 
       beyo.on('pluginLoadConflict', function (evt) {
-        evt.should.have.property('error').be.an.Error
+        evt.should.have.property('error').be.instanceOf(Error)
           .and.have.ownProperty('message').startWith('Duplicate plugin alias: test');
 
         hasError = true;
@@ -271,9 +277,7 @@ describe('Test Plugins Loader', function () {
         plugins.should.have.ownProperty('my.meh');
 
         done();
-      }).catch(function (err) {
-        done(err);
-      })
+      }).catch(done);
     });
   });
 

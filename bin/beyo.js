@@ -31,16 +31,16 @@ program
 ;
 
 // if no command given, push '-h' to get some help!
-if (!process.argv.slice(2).filter(function (arg) {
+if (!process.argv.slice(2).some(function (arg) {
   return arg.charAt(0) !== '-';
-}).length) {
+})) {
   process.argv.push('-h');
 }
 
 program.on('*', function (args) {
   console.error('Unknown command :', args[0]);
   console.error();
-  process.exit(1);
+  process.exit(2);
 });
 
 commandPaths.forEach(function (commandPath) {

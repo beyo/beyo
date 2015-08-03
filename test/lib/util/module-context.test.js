@@ -43,7 +43,7 @@ describe('Test Module Context', function () {
 
     ctx.should.have.ownProperty('_module').equal(module);
     ctx.should.have.ownProperty('_config').equal(config);
-    ctx.should.have.ownProperty('config').be.a.Function;
+    ctx.should.have.ownProperty('config').be.instanceOf(Function);
 
     ctx.config('foo.bar.buz.meh').should.equal('Hello World!');
   });
@@ -58,8 +58,8 @@ describe('Test Module Context', function () {
     ctx.constructor.name.should.equal('ModuleContext');
 
     ctx.should.have.ownProperty('_module').equal(module);
-    ctx.should.have.ownProperty('_config').and.be.an.Object.eql({});
-    ctx.should.have.ownProperty('config').be.a.Function;
+    ctx.should.have.ownProperty('_config').and.be.instanceOf(Object).eql({});
+    ctx.should.have.ownProperty('config').be.instanceOf(Function);
 
     should(ctx.config('foo.bar.buz.meh')).be.undefined;
   });

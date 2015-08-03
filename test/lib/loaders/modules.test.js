@@ -64,9 +64,9 @@ describe('Test Modules Loader', function () {
     var beyo = new BeyoMock();
 
     loader(beyo, { path: 'simple-app/app/modules/' }).then(function (modules) {
-      modules.should.be.an.Object
-        .and.have.property('test').be.an.Object
-        .and.have.property('module').be.an.Object
+      modules.should.be.instanceOf(Object)
+        .and.have.property('test').be.instanceOf(Object)
+        .and.have.property('module').be.instanceOf(Object)
         .and.have.property('name').equal('test');
 
       beyo.__modules.test.should.be.true;
@@ -124,14 +124,14 @@ describe('Test Modules Loader', function () {
     });
     it('should emit `moduleLoadConflict`', function () {
       beyo.on('moduleLoadConflict', function (evt) {
-        //module.should.be.an.Object;
+        //module.should.be.instanceOf(Object);
 
         eventsFired['moduleLoadConflict'] = true;
       });
     });
     it('should emit `moduleLoadError`', function () {
       beyo.on('moduleLoadError', function (evt) {
-        evt.error.should.be.an.Error;
+        evt.error.should.be.instanceOf(Error);
 
         eventsFired['moduleLoadError'] = true;
       });
@@ -154,7 +154,7 @@ describe('Test Modules Loader', function () {
       var errorDetected = false;
 
       beyo.on('moduleLoadError', function (evt) {
-        evt.error.should.be.an.Error;
+        evt.error.should.be.instanceOf(Error);
 
         if (evt.error.message.indexOf('simple-app/app/error-modules/invalid-module-json') > -1) {
           errorDetected = true;
@@ -179,7 +179,7 @@ describe('Test Modules Loader', function () {
       var errorDetected = false;
 
       beyo.on('moduleLoadError', function (evt) {
-        evt.error.should.be.an.Error;
+        evt.error.should.be.instanceOf(Error);
 
         if (evt.error.message === 'No name defined for module at: simple-app/app/error-modules/missing-name') {
           errorDetected = true;
@@ -219,7 +219,7 @@ describe('Test Modules Loader', function () {
         }
 
         beyo.on('moduleLoadError', function (evt) {
-          evt.error.should.be.an.Error;
+          evt.error.should.be.instanceOf(Error);
 
           if (evt.error.message === 'Invalid module name: ' + String(invalidName)) {
             errorDetected = true;
@@ -262,8 +262,8 @@ describe('Test Modules Loader', function () {
       loader(beyo, configOptions).then(function (modules) {
         conflictDetected.should.be.true;
 
-        modules.should.have.ownProperty('test').be.an.Object
-          .and.have.ownProperty('module').be.an.Object
+        modules.should.have.ownProperty('test').be.instanceOf(Object)
+          .and.have.ownProperty('module').be.instanceOf(Object)
           .and.have.properties({
             'name': 'test',
             'description': 'Beyo simple-app\'s default test module'
@@ -284,7 +284,7 @@ describe('Test Modules Loader', function () {
       var errorDetected = false;
 
       beyo.on('moduleLoadError', function (evt) {
-        evt.error.should.be.an.Error;
+        evt.error.should.be.instanceOf(Error);
 
         if (evt.error.message === 'Missing module: invalid-dependency-module-that-do-not-exist') {
           //evt.moduleName.should.equal('invalid-dependency-module-that-do-not-exist');
@@ -311,7 +311,7 @@ describe('Test Modules Loader', function () {
       var errorDetected = false;
 
       beyo.on('moduleLoadError', function (evt) {
-        evt.error.should.be.an.Error;
+        evt.error.should.be.instanceOf(Error);
 
         if (evt.error.message === 'Cyclical dependency found in dependency-test') {
           //console.log("*** CYCLICAL", evt);

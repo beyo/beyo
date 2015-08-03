@@ -74,7 +74,7 @@ describe('Test Logger Loader', function () {
         logger.should.have.property(level).a.Function;
       });
 
-      //logger.should.be.an.instanceOf(EventEmitter);
+      //logger.should.be.instanceOf(instanceOf)(EventEmitter);
       [
         'on', 'addListener', 'removeListener', 'emit'
       ].forEach(function (property) {
@@ -114,7 +114,7 @@ describe('Test Logger Loader', function () {
         done(TestError('Failed'));
       });
     } catch (e) {
-      e.should.be.an.Error
+      e.should.be.instanceOf(Error)
         .and.have.property('message')
         .equal('Logger has no transport class: ___SOME_INVALID_AND_SILLY_TRANSPORT___');
 
@@ -204,7 +204,7 @@ describe('Test Logger Loader', function () {
 
         done(TestError('Failed'));
       } catch (e) {
-        e.should.be.an.Error;
+        e.should.be.instanceOf(Error);
       }
 
       loader(beyo, {}).then(function () {
@@ -221,7 +221,7 @@ describe('Test Logger Loader', function () {
     });
     it('should emit `loggerLoadError`', function () {
       beyo.on('loggerLoadError', function (evt) {
-        evt.error.should.be.an.Error;
+        evt.error.should.be.instanceOf(Error);
 
         eventsFired['loggerLoadError'] = true;
       });
