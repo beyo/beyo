@@ -1,6 +1,6 @@
 {
   "name": "beyo",
-  "version": "2.0.1-alpha",
+  "version": "2.0.2-alpha",
   "description": "Beyo Application framework",
   "author": "Yanick Rochon <yanick.rochon@gmail.com>",
   "license": "MIT",
@@ -8,7 +8,6 @@
     "beyo",
     "application",
     "framework",
-    "iojs",
     "promise",
     "async",
     "module",
