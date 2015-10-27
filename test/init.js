@@ -31,7 +31,7 @@ GLOBAL.BeyoMock = global.BeyoMock = function BeyoMock(requireCallback) {
   this.rootPath = path.resolve(__dirname, 'fixtures');
   this.env = 'test';
 };
-require('util').inherits(BeyoMock, require('events').EventEmitter);
+require('util').inherits(BeyoMock, require('promise-events'));
 
 
 GLOBAL.ModuleContextMock = global.ModuleContextMock = function ModuleContext() {

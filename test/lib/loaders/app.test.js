@@ -75,14 +75,14 @@ describe('Test App Loader', function () {
     });
 
     loader(beyo, options).then(function (app) {
-      app.should.equal('app');
+      app.should.have.ownProperty('__app').eql(beyo.__app);
 
       events.should.have.ownProperty('appLoad');
       events.should.have.ownProperty('appLoaded');
       events.should.not.have.ownProperty('appLoadError');
 
       done();
-    });
+    }).catch(done);
   });
 
 

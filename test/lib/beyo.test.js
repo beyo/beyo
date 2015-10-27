@@ -34,8 +34,7 @@ describe('Beyo Application Framework', function () {
       testBeyo.init().then(function () {
         testBeyo.isInitializing.should.be.false;
 
-        // if the fixture was called, then `init` was invoked, and we should have an require function!
-        testBeyo.require.should.be.a.Function;
+        testBeyo.should.have.ownProperty('__main').be.an.Object;
 
         testBeyo.isReady.should.be.true;
 
@@ -45,7 +44,7 @@ describe('Beyo Application Framework', function () {
 
     it('should have loaded app', function (done) {
       testBeyo.init().then(function () {
-        testBeyo.app.should.equal('app');
+        testBeyo.app.should.have.ownProperty('__app').eql(testBeyo.__app);
 
         done();
       }).catch(done);
