@@ -65,8 +65,6 @@ function * init(appRequire) {
     writable: false,
     value: yield pluginsLoader(beyo, beyo.config.plugins)
   });
-
-  events.emit('afterInitialize', beyo);
 }
 
 /**

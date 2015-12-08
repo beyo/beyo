@@ -77,7 +77,7 @@ if (mod_nodemon) {
 
 } else {
 
-  var proc = spawn(process.argv[0], args, { customFds: [0,1,2] });
+  var proc = spawn(process.argv[0], args, { stdio: 'inherit', customFds: [0, 1, 2] });
   proc.on('exit', function (code, signal) {
     process.on('exit', function () {
       if (signal) {

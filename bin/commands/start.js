@@ -37,20 +37,18 @@ function _initAction(args) {
             "Type `beyo init` to create a new application.\n";
     }
 
-  })(function (err) {
-    if (err) {
-      (beyo && beyo.logger || console).log('error', err.stack || err);
-      process.exit(-1);
-    } else {
-      if (!beyo.config || !beyo.config.server || !beyo.config.server.port || !beyo.config.server.host) {
-        beyo.logger.log('error', 'Missing server configuration');
-        process.exit(-2);
-      }
-
-      // listen
-      beyo.app.listen(beyo.config.server.port, beyo.config.server.host);
-      beyo.logger.log('info', 'Listening on %s:%s', beyo.config.server.host, beyo.config.server.port);
+  }).then(function () {
+    if (!beyo.config || !beyo.config.server || !beyo.config.server.port || !beyo.config.server.host) {
+      beyo.logger.log('error', 'Missing server configuration');
+      process.exit(-2);
     }
+
+    // listen
+    beyo.app.listen(beyo.config.server.port, beyo.config.server.host);
+    beyo.logger.log('info', 'Listening on %s:%s', beyo.config.server.host, beyo.config.server.port);
+  }).catch(function (err) {
+    (beyo && beyo.logger || console).log('error', err.stack || err);
+    process.exit(-1);
   });
 }
 
